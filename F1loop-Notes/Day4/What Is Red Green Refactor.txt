@@ -1,0 +1,61 @@
+# What Is Red Green Refactor
+
+## Books
+
+- [Extreme Programming Explained: Embrace Change](https://www.amazon.co.uk/Extreme-Programming-Explained-Embrace-Change/dp/0321278658?_encoding=UTF8&dib_tag=se&dib=eyJ2IjoiMSJ9.WrSa-EFtQYjFbdz2spdlQEZU_Rk3ObWgU56kSrCgwZujuj80E-f7St1ACT-v7MJstbMf8NOm4DopK1pwtudkkcFzt0E5Qxnhj7myBqSvbb8-g91JKGBarjSJavUVZG4bKFLGxajrDsYPBIt_qwHhZ5SJVSod5vLTnX3qTlK5n-NnEXiJ1AljSTL9uOiS0dcm.BIxQH2bghu3FtepKfrpw7MZ2fQi5TCPHAncATIZyzpw&qid=1774289888&sr=1-1)
+
+## Introduction
+
+We now have our do work skill, and at the moment it's kind of vanilla. It's not exactly optimized for what I think is the best way to build code. 
+
+![not optimized for the best way to build code](https://res.cloudinary.com/total-typescript/image/upload/v1773341597/ai-hero/claude-code-cohort/mxfrzjf4hqnpjr9epr5k.jpg)
+
+For instance, we aren't giving it any kind of instruction on how to implement the plan. However, the debate on how to implement code is almost as old as software development itself. 
+
+And there are a ton of great techniques that allow you to not only build out the code, but do it in a safe way that increases the value of your feedback loops as you go.
+
+We want to push this implementation step to increase our code quality, not diminish it. And the technique I'm going to teach you about is **red-green refactor**.
+
+## Red-Green Refactor and TDD
+
+Time for me to wave another book at you. This is Extreme Programming Explained by Kent Beck. Kent Beck is a prominent advocate for something called test-driven development.
+
+![extreme programming explained by kent beck](https://res.cloudinary.com/total-typescript/image/upload/v1773341601/ai-hero/claude-code-cohort/sajms5forvdryb40ijxm.jpg)
+
+And the foundation of TDD is that tests are really important and should drive your entire development process. This is even more true in the age of AI where feedback loops are so important.
+
+![red green refactor loop](https://res.cloudinary.com/total-typescript/image/upload/v1773341599/ai-hero/claude-code-cohort/o8jjipncdaizpm6gig3z.jpg)
+
+One of Kent's main techniques is that you have this red-green refactor loop while you're implementing. It's very tempting when you're building stuff to just dive into implementation and this is what AI will do every single time you ask it.
+
+**But what red-green refactor does is it says you should write a failing test first.** And not only should you write the test, but you should run the test to see that it fails. 
+
+This is phenomenal when you're bug fixing because you prove the bug exists and then you go to fix the bug in the green phase. In the green phase, you write a minimal implementation to make CI go green again. In other words, you just try to pass the test. And then in the refactor phase you go and look at that code, refactor it, kind of put it in a prettier state and try to increase your code quality.
+
+All the time running the feedback loops to make sure that you're keeping the CI green. And by the way when I say CI I mean *continuous integration*. That's kind of a shorthand that devs use to basically mean types and tests.
+
+## Why Write a Failing Test First?
+
+So why does writing a failing test first matter so much? Well, for AI, it's incredible because it gives the AI the ability to run the code and test the code even before it's written the code.
+
+And not only that, but it forces the code that the AI creates to be testable. And if a piece of code is testable, then it's easy to write tests for, and so easy to change later because the tests will catch any bugs with the code. 
+
+And having a failing test in place first means that the AI can instrument the code and add logs and understand the code really deeply while it's implementing. 
+
+Personally, I have found that using red-green refactor in my implementation phases increases the quality of AI's code so much. I've also found that combining red-green refactor with tracer bullet is an extremely good way to go.
+
+## Combining Red-Green Refactor with Tracer Bullet
+
+![red-green refactor with tracer bullet](https://res.cloudinary.com/total-typescript/image/upload/v1773341600/ai-hero/claude-code-cohort/jlbc8eq50dnks7qkqwbj.jpg)
+
+With this setup the agent creates one failing test, then creates a minimal thing to pass that test, then it creates another failing test, then creates the minimal implementation needed to pass that test. In other words the first test here is a tracer bullet test. It's just testing one vertical slice of the entire setup. 
+
+So getting AI to work through and just create *one test at a time*, it has been so good. Because this reduces the likelihood that AI is going to spray a bunch of tests in a horizontal layer into your code base, many of which might not actually be testing a real thing.
+
+Finally, from your perspective as the user, actually seeing the failing test and then seeing the test succeed is a really good way to just feel confident about what the LLM is doing. 
+
+Because actually having a failing test and then making it pass is relatively hard for the LLM to fake. 
+
+Obviously if it's feeling malicious then it can just kind of create a crap test and then make that crap test pass with a crap implementation. But in my experience if it's steered well it just rarely does that. And as it's going through this cycle it's adding better and better tests to the repo which are testing existing code, making the codebase easier to change and easier to manipulate.
+
+And I'm really really excited to show you this as part of this course. So nice work, I'll see you in the next one.

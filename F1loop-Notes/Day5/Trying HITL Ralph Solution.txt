@@ -1,0 +1,43 @@
+# Trying HITL Ralph Solution
+
+Okay, let's run it and see what happens. So the first thing we can see is that Claude has been run now with all of the previous commits here. We can zoom down a bit further and then we can see the plan and PRD have been added into the prompt here. 
+
+![prompt with plan and PRD](https://res.cloudinary.com/total-typescript/image/upload/v1773345830/ai-hero/claude-code-cohort/flu8oqe1qxyjjorzpsnu.jpg)
+
+And then finally we have the prompt from our `prompt.md` file. So predictably, it's going into an explore phase, which is great, and it's now decided it is going to implement phase one.
+
+> Let me implement phase one. I need to add platform-wide analytics, add the admin analytics root, add analytics to the admin sidebar.
+
+![plan implementation](https://res.cloudinary.com/total-typescript/image/upload/v1773345831/ai-hero/claude-code-cohort/lm7jezlvzmvd4htzxjla.jpg)
+
+We can see it's continuing to churn out code and implement, and we're heading towards the dumb zone, but we're not necessarily that close to it. It has added the new tests, and now it's running the feedback loops, and I'm absolutely fine with it running `pnpm run test`.
+
+## Handling Permissions
+
+One thing to note here is that we as the humans are still needed to run permissions requests here and make sure that it's not doing anything too crazy or rim raffing our home directory. For instance here it's saying
+
+> Should I proceed because the command contains backticks for command substitution?
+
+![proceed with command substitution](https://res.cloudinary.com/total-typescript/image/upload/v1773345833/ai-hero/claude-code-cohort/ioaqoynoskhwgy83k1dk.jpg)
+
+Yes, that's fine, you may proceed. To run this totally AFK, we will want to somehow manage these better in future and we're gonna talk about that in a bit. Okay, a really nice clean run.
+
+## Checking the Results
+
+We are at 30% context. We have added a bunch of new tests and the admin sidebar. I'm going to head to the dev server and log in as Alex Rivera, the admin. I'm going to go to my dashboard and we should now see analytics. So we now have 12 months, all time, seven days, very cool.
+
+![analytics dashboard](https://res.cloudinary.com/total-typescript/image/upload/v1773345834/ai-hero/claude-code-cohort/qk7n6v45tu5jrlqw1iq0.jpg)
+
+And we should too have the top earning course here, which is of course, Introduction to TypeScript. Why wouldn't it be? 
+
+So this is exciting. The AI has produced really nice code without us really needing to do anything. With the exception of a couple of permissions issues, we would probably be able to run this in a loop pretty comfortably and continue adding commits into this repo.
+
+## The Ralph Cycle
+
+So that is the idea of Ralph. 
+
+You just run the same thing again and again and you get a commit at the end of it. You then pass those commits into the next iteration of the loop and the wonderful beautiful cycle continues on and on. 
+
+Let me know if you have any questions or observations, or if your Ralph loop somehow didn't do as good a job as mine. Let me know in the Discord server.
+
+But if everything is good, nice work, and I'll see you in the next one.

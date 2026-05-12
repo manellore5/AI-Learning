@@ -1,0 +1,85 @@
+# Hooking Up Ralph to Your Backlog Solution
+
+Okay, let's run it and see what happens. It's exploring the repository structure. We imagine it's running an explore sub-agent. That means that the GitHub issue stuff resolved properly and it's looking at the work that's been done.
+
+![exploring the repo](https://res.cloudinary.com/total-typescript/image/upload/v1773351881/ai-hero/claude-code-cohort/odnpzd52rhc6rxwag3f1.jpg)
+
+We can see that phases one and two are complete. In other words, it's seeing that from the commit history, not from the issue comments. It then starts implementing phase three, starting with the service function, adding some new tests, and it's updating the route. All the tests are passing here and the type checks are passing and now it's committing. And finally it's decided to close the GitHub issue now that all three phases are complete.
+
+![all 3 phases complete](https://res.cloudinary.com/total-typescript/image/upload/v1773351882/ai-hero/claude-code-cohort/u6abtiovtnp6cxy89bv9.jpg)
+
+So from inside the Docker sandbox, thanks to our authentication login with GitHub, it is able to actually manipulate issues, which is very cool.
+
+> The PRD issue is still open since all work described in it is now implemented. Let me close it too.
+
+Phenomenal stuff. So, so good.
+
+## Watching the Ralph Loop Complete
+
+And not only that, it says "no open issues remaining" and it outputs "no more tasks." It then comes back with a summary and this all looks good and the Ralph loop is complete after one iteration. 
+
+![Ralph loop complete](https://res.cloudinary.com/total-typescript/image/upload/v1773351883/ai-hero/claude-code-cohort/nkcdxxeordjmb4xnwjaf.jpg)
+
+Now it does not always cleanly manage to exit like this on the same iteration. Sometimes it will say, okay, I've done my tasks, let me go to a new iteration, and then in that iteration, it sees there are no more open issues, and then says "no more tasks." I found that that's a decent enough trade-off that I don't mind the extra little run to just check that there's no more tasks since that's really cheap.
+
+But yeah, would you look at that, our Ralph loop is pulling from GitHub issues. Incredible. 
+
+Okay let's QA this. I'm gonna sign in as Alex Rivera again. I'm gonna go up to dashboard, go to my analytics over here and I should see a little bit more richness in the UI here. Yeah we can see we have a course breakdown here and we can filter by instructors 
+
+![analytics page](https://res.cloudinary.com/total-typescript/image/upload/v1773351884/ai-hero/claude-code-cohort/omi6gw6kj1ha6a0vclg7.jpg)
+
+so we can filter to only see Sarah Chen's or we can filter to only see Marcus Johnson's.
+
+That should be responsive to the number of days I select too, so seven days, yep, we can see Marcus Johnson only earned $60. Then, yeah, over 30 days, $60, but over 12 months, he earned a decent amount. 
+
+Now so far, throughout the course, I've been trailing how I like to do QA without really explaining how I like to do QA. 
+
+And really, I've been waiting for this backlog-based setup to show you properly. So let's find something we want to modify here.
+
+## Filing a QA Issue
+
+When we go initially onto the analytics page, it defaults to 30 days. Let's say that I actually wanted to default to 12 months instead. We're going to go to our GitHub issues on the fork and then we're going to add a new issue here. Then we're just going to say:
+
+> The analytics page for the admins should default to 12 months not 30 days.
+
+Let's add a touch more detail down here. The analytics page for the admins, they need to view a kind of entire swathe of time rather than instructors who are most likely just focused on their current month. So we really don't need to add that much more than that, this is really just a little bit of polish, a little quick win. 
+
+And I've submitted that now as issue three. 
+
+![issue 3](https://res.cloudinary.com/total-typescript/image/upload/v1773351885/ai-hero/claude-code-cohort/wvw5f9eympbi2ov9fiaf.jpg)
+
+So now we can head back down into our terminal and just go up in the terminal to run the same command again. Now as we can see, it starts looking at issue three.
+
+![looking at issue 3](https://res.cloudinary.com/total-typescript/image/upload/v1773351888/ai-hero/claude-code-cohort/is0li5nkplwtpc7mcikf.jpg)
+
+> The admin analytics page should default to 12 months instead of 30 days.
+
+What's important to realize here is that there's no plan mode here. There's no back and forth with the agent. **So your issue description needs to be really, really clear.** However, because this is such a simple change, it was able to do it pretty quickly.
+
+We're still getting that `better-sqlite3` native module issue. Thank the Lord we have that skill. Alrighty and the tests are passing, the type check is clean, let's commit and close the issue. And we can see that on the issue it says fix, change the default time period for analytics from 30 days to 12 months. 
+
+![issue closed](https://res.cloudinary.com/total-typescript/image/upload/v1773351890/ai-hero/claude-code-cohort/df88lxzkex7zj2wttfrs.jpg)
+
+And in the terminal it says "no more tasks," Ralph complete after one iteration, let's close the issue.
+
+## Delegating Backlog Tasks
+
+Beautiful stuff. And now a tiny bit of QA: when we go to a different page and go back to the analytics page it defaults to 12 months. 
+
+![analytics page defaults to 12 months](https://res.cloudinary.com/total-typescript/image/upload/v1773351891/ai-hero/claude-code-cohort/ffpkxhaofab1clb0si1z.jpg)
+
+I really can't describe how cool it is to just be able to completely delegate little backlog tasks like this to an agent. 
+
+What I'd recommend you do now is, if you have time, this is an optional extra exercise, go through the entire site and just look for little things that you want to tweak. Maybe you don't like the icon on the manage courses item or something like that.
+
+Do a little bit of QA on the whole site and just put those in GitHub issues. Once you've done that, go back to your Ralph loop here and run it on  a higher `maxIterations`, maybe like 10 or something.
+
+```bash
+./ralph/afk.sh 10
+```
+
+And then sit back and watch as the bugs just fix themselves.
+
+Write down anything you notice and go into the Discord to see how other people got on too. 
+ 
+Very, very, very nice work!

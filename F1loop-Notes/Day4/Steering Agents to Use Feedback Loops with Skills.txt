@@ -1,0 +1,59 @@
+# Steering Agents to Use Feedback Loops with Skills
+
+Now we know how important software quality is, how do we keep the agents on the right path? 
+
+How do we increase the quality of what the agent is producing so we don't end up in a software *entropy death spiral*? Well, one thing we have already learned how to do is to proactively steer the agent by using `AGENTS.md` files or using skills. But this kind of increases the probability that an agent will choose the right path. 
+
+Wouldn't it be better if we could deterministically always enforce something for the agent to increase its quality?
+
+## Feedback Loops
+
+![feedback loops](https://res.cloudinary.com/total-typescript/image/upload/v1773336840/ai-hero/claude-code-cohort/l7v99xmxya7o8lr2clkx.jpg)
+
+So this is where feedback loops come in. The agent produces some code, we give some feedback to the agent based on the code that it's produced, and this then helps the agent to produce more code which goes again through the feedback loops until it's produced something of sufficient quality. 
+
+Now this of course is something that we as humans have been doing for a long time. **Great engineers don't trust their own instincts and don't trust the quality of the code they're producing**. So they produce a lot of feedback loops in order to improve their own quality.
+
+So we're just taking the same tried and tested software practice and applying it to agents instead of humans. Now the more feedback loops and the better quality feedback loops you can produce, the better the output is going to be. 
+
+A classic one is using a strongly typed language like **TypeScript** instead of a weakly typed language like JavaScript. 
+
+With TypeScript you're going to get errors if you create a typo or you use the wrong type, which is feedback the agents can use to write better code. Another really important one is any kind of **automated testing**.
+
+Automated tests actually run your code and check that the logic works how you expect it to. And so the higher quality test suite that you can produce, the more signal you're going to be giving the agents, the better feedback, the better quality code. 
+
+And so testing and strong types are essential for getting high quality code out of agents. Inside our repo, we've already got some type checking and test set up. We already have a script for `typecheck` here, which runs `react-router typegen` and `tsc`.
+
+![typecheck script](https://res.cloudinary.com/total-typescript/image/upload/v1773336841/ai-hero/claude-code-cohort/wfojlgbutqafjodcn4cn.jpg)
+
+In other words, it sort of gets the types ready to be run and then checks the entire repo using the TypeScript CLI.
+
+Then we've got this `test` command, which runs `vitest run`, which runs essentially the entire test suite in the repository. 
+
+You may already have noticed that we have services inside our application which each have some kind of test service next to them. For instance, `purchaseService` has `purchaseService.test.ts`. 
+
+![services with test files](https://res.cloudinary.com/total-typescript/image/upload/v1773336842/ai-hero/claude-code-cohort/qupvwqxbzpoyxtrax2jt.jpg)
+
+The question then becomes how do we encourage the agent to use these feedback loops to improve its code?
+
+## The Do Work Skill
+
+How do we get it to work in this fashion where it basically asks for feedback on every piece of code that it produces? Now of course we could add these instructions into a `CLAUDE.md` file and so it's in every single session. But not every single session needs to run the feedback loops. 
+
+So what I prefer to do is create a **skill** instead. In nearly every one of my repos I have this do work skill, which I invoke every single time I make a change to the repo.
+
+![do work skill](https://res.cloudinary.com/total-typescript/image/upload/v1773336844/ai-hero/claude-code-cohort/nwhtpu7xzx5t4ocbpria.jpg)
+
+This do work skill basically has a list of instructions for the LLM to follow that mimic how I work when I'm contributing to a repo. 
+
+In the first part of the skill, I get it to plan out what we're going to do. This is not always necessary because sometimes I'll be working to a pre-written plan. 
+
+Then I'll get it to implement the change. 
+
+Then I'll get it to seek feedback on what it just implemented.
+
+And then I'll get it to commit the code to the repo with a commit message. 
+
+![four steps of the do work skill](https://res.cloudinary.com/total-typescript/image/upload/v1773336848/ai-hero/claude-code-cohort/z2ldazewh13zym7rdljm.jpg)
+
+This is the nicest way I've found to steer the LLM to use feedback loops and to use a kind of loop in the repo that I can then iterate on. And in the next couple of exercises we're going to build our own and use it to build a feature.

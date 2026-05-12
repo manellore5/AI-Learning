@@ -1,0 +1,33 @@
+# HITL vs AFK Ralph
+
+You can think of there as being really two types of Ralph loops. And if you go into the project repo, you can actually see them here. Inside the `ralph` folder in the root of the project, we have two scripts here.
+
+![ralph scripts](https://res.cloudinary.com/total-typescript/image/upload/v1773345270/ai-hero/claude-code-cohort/rz0qn8dijpgem2y2gfby.jpg)
+
+One of these is an AFK script, and this is pretty complicated, and we'll walk through all of this later, but it essentially runs a loop here. So we have a `for` loop in bash. This runs `claude` code autonomously multiple times until some objective is achieved.
+
+![afk ralph loop](https://res.cloudinary.com/total-typescript/image/upload/v1773345271/ai-hero/claude-code-cohort/yc8ovqtcs7qvtlilaesl.jpg)
+
+The other script we have is the `once` script, which just runs Ralph once. So there's no looping here. All we do is we just watch Ralph do its work.
+
+![once ralph script](https://res.cloudinary.com/total-typescript/image/upload/v1773345272/ai-hero/claude-code-cohort/t3syypyjtqcdxsddgaf7.jpg)
+
+## Human in the Loop vs AFK
+
+These autonomous loops take a while to set up and you need experience with watching them and understanding what they're doing before you can feel safe letting them run autonomously.
+
+So I think of that as being two types of Ralph loops. There are human in the loop Ralph loops where you just run this `once` script where you're just sort of learning it, getting up to speed with what Ralph is doing, and then there's AFK Ralph where you just go over here and you use the proper full fat script here with everything inside.
+
+![full fat script](https://res.cloudinary.com/total-typescript/image/upload/v1773345274/ai-hero/claude-code-cohort/zvfafijahgkkzagluu0d.jpg)
+
+You notice that both of these actually use a shared prompt here. So the human in the loop Ralph and the AFK Ralph will behave exactly the same, it's just that the harness around them is slightly different.
+
+![shared prompt](https://res.cloudinary.com/total-typescript/image/upload/v1773345277/ai-hero/claude-code-cohort/p4dsghlp6slojztw7zxr.jpg)
+
+## Getting Started
+
+In this section we're gonna start with human in the loop Ralph, get our bearings, understand what it's doing, learn how to best prompt it, and then we're going to go AFK and start running it autonomously once we've got our feet wet and we're feeling comfortable.
+
+And that's also exactly what I would do if I was introducing this to a new repo. So in the next exercise, we're going to start with human in the loop Ralph. 
+
+Nice work, I'll see you in the next one.

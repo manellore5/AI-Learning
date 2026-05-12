@@ -1,0 +1,37 @@
+# Updating Our PRD and Plan Skill to Use GitHub
+
+<CommitMap>
+  <Commit id="07.09.01">
+    Start the lesson - PRD and plan skills updated to use GitHub
+  </Commit>
+</CommitMap>
+
+This is a little addendum to the previous exercise where we still need to go back through and actually every time that we write a PRD or we turn that PRD into a plan, we now need to create GitHub issues instead of the local markdown files.
+
+## Updating the PRD Skill
+
+So this commit does this. It just simply says:
+
+> Once you have a complete understanding of the problem and solution, use the template below to write the PRD. The PRD should be submitted as a GitHub issue.
+
+![step number 4](https://res.cloudinary.com/total-typescript/image/upload/v1773352348/ai-hero/claude-code-cohort/pvu3jodcpvaa0a5jfjzb.jpg)
+
+Because Claude and models like it understand the `gh` CLI so well, we don't even need to prompt it to use the GitHub CLI.
+
+## Updating the Plan Skill
+
+I've then done exactly the same thing to the PRD to plan inside here. So that should be just down the bottom:
+
+> Write the plan file. Create a GitHub issue containing the plan, use the template below.
+
+![prd to plan](https://res.cloudinary.com/total-typescript/image/upload/v1773352349/ai-hero/claude-code-cohort/hqc6i5ukw78gqbg5kuec.jpg)
+
+So exactly the same. So these skills then, the PRD creator and the PRD to plan, they're just essentially scripts that you run locally that just pings them up to Ralph. Ralph then runs through the backlog and chews through it and you're good to go.
+
+## The Power of Local-to-GitHub Workflows
+
+So this pattern of working with an LLM locally to create a GitHub issue is just something I've found is just so powerful. It's great obviously for building features, but also great for issue triage, for ideas, for RFCs. There is a lot of meat on those bones.
+
+So there we go, addendum over. 
+
+Nice work, I'll see you in the next one.

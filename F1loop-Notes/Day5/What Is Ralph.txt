@@ -1,0 +1,56 @@
+# What Is Ralph
+
+## Links
+- [Ralph Wiggum as a "software engineer"](https://ghuntley.com/ralph/)
+
+## Introduction 
+
+I want you to cast your mind back for a moment to this mental model that we had about multi-phase plans. 
+
+![multi-phase plans mental model](https://res.cloudinary.com/total-typescript/image/upload/v1773344711/ai-hero/claude-code-cohort/yiybhkdr9hlllblgfuwm.jpg)
+
+Now the idea of multi-phase plans of course is to take this huge chunk of work and break it down into smaller chunks that we can fit inside the smart zone of a context window. This means that we need to prompt the agent with three parts here. We need to prompt it with the destination, we need to prompt it with the journey, in other words, the breakdown of all of the tasks, and we need to prompt it to do `phase N`. In other words, phase one for the first one, phase two, phase three, phase whatever.
+
+Now there's a problem with this, and the problem I see with this setup is this `do phase N`. In other words, this is a human that's having to sit with the LLM as it does all of this work and say, okay, now go on to the next phase. In other words, this entire process requires a human in the loop, HITL. 
+
+![human in the loop](https://res.cloudinary.com/total-typescript/image/upload/v1773344713/ai-hero/claude-code-cohort/yrcha7lcm54ogjximwsr.jpg)
+
+And the truth is that not all of the tasks we're gonna be doing in a plan require a human in the loop. Many of the tasks that we need to do with an agent can be done AFK, away from keyboard, where the human is not in the loop.
+
+![afk](https://res.cloudinary.com/total-typescript/image/upload/v1773344714/ai-hero/claude-code-cohort/ln0wn7i6dijs3qzuwzdx.jpg)
+
+You may have felt this while you were monitoring the agent during its multi-phase plan. You might be thinking at certain points, I don't really need to be here. Because we have the PRD, the destination all mapped out, and we've understood what the plan is, then the agent can really do its own thinking and just we can QA it all at the end. The only thing I'm really needed here for is to point it to the right phase and that does not feel like something you need a human for. That can be done with a simple `for` loop.
+
+## Discovering Ralph
+
+Now this is what I had been feeling for a while. I've been using multi-phase plans up until December 2025 and they were okay but not amazing. I've been starting to feel like I wanted to step away from the keyboard a bit more and go and do other work while the agent was doing its thing. In other words, I wanted the agent to be more autonomous. And without really knowing it, I was looking for a framework that would help me do that.
+
+And around then I discovered [this article](https://ghuntley.com/ralph/) by Geoffrey Huntley describing Ralph Wiggum as a software engineer. This article gathered a lot of hype and it's gone into the vernacular of people doing work with Claude Code. At the time of recording a few weeks ago, Vercel said they Ralph Wiggum web streams to make them 10 times faster. You know people are calling out the weird little kid from The Simpsons and saying yes we use this as an AI coding technique. 
+
+## How Ralph Works
+
+**All that Ralph is is a simple loop.**
+
+You essentially just run Claude in a loop with a single prompt, the same prompt over and over again, getting it to do a task until it's complete. 
+
+![ralph loop](https://res.cloudinary.com/total-typescript/image/upload/v1773344715/ai-hero/claude-code-cohort/dw7d8ymxjypvgbpg8enz.jpg)
+
+If this sounds way too simple, then that's because it is. Instead of saying `do phase N` here, we are essentially asking the agent to walk through the journey itself. We give it the destination and we give it our description of the journey and then it just walks through until it completes. 
+
+This means that instead of the human being needed at the start of each phase here and at the end of the last one to QA it and make sure all the code is good, the human is really only needed at the very start and the very end.
+
+This means that you can kick off a Ralph loop and it will just loop and loop and loop until it's complete and then it will ping you and you can go and QA the code. 
+
+This setup here is how I'm doing most of my coding now. The flow tends to be I spend a lot of time creating the PRD and doing all of the planning and then I walk away and come back to working code at the end, or mostly working code. Even while I'm filming this now, I have a Ralph loop running in the background doing some work for me. 
+
+So for me, getting agents to work autonomously has been really the goal of this course and the goal of all of my work for the past few months.
+
+## Different Flavors of Ralph
+
+Everything we've learned from planning to feedback loops to steering is really geared towards getting the agent to produce good results autonomously. 
+
+Now as a final note here, Ralph is a stupid name and in certain ways it's not even really a concept. **Ralph is really just a loop**, and everyone has different implementations of that loop, different flavors in their Ralph loops. And certainly, I'm gonna be teaching you something that's very different to the original vision proposed by Jeff Huntley. He prefers a much looser, just give the thing a PRD and let it just run forever.
+
+I prefer a version of Ralph where you control it a lot more, where you give it more guardrails and where you give it a specific plan to follow as you go along. So there's no such thing as a right way to do Ralph, we're just trying to run an agent in a loop and get good results at the end. And I bet now you are very excited to dive in and I'm very excited to teach you it. 
+
+So nice work and I will see you in the next one.

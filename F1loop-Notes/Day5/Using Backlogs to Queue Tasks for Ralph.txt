@@ -1,0 +1,69 @@
+# Using Backlogs to Queue Tasks for Ralph
+
+I have one final issue with our Ralph loop and the way we've got it set up. And that is what we are asking it to do. In our prompt here, we have
+
+> A PRD and a plan have been provided to you.
+
+Now this is fine, but we need to manually specify which PRD and which plan we're passing in every single time we wanna do any work. In other words, we as the human are kind of in the loop here because we are doing task selection for Ralph.
+
+![task selection for Ralph](https://res.cloudinary.com/total-typescript/image/upload/v1773348241/ai-hero/claude-code-cohort/ifz5iiydx1q5loivy1pj.jpg)
+
+## The Backlog Problem
+
+Most of the tasks that you do in a repo are not going to be building big features that require a PRD and multi-step plans. 
+
+A lot of what it's gonna be is development infrastructure, you know, like upgrading packages or changing the way dev scripts work. It's gonna be bug fixes, like really critical bug fixes maybe that are actually really important to ship. 
+
+Or maybe it's gonna be polish or quick wins or changing the wording of something on a website. All of these tasks then form a backlog, which you need to get done in some sort of order.
+
+![backlog](https://res.cloudinary.com/total-typescript/image/upload/v1773348242/ai-hero/claude-code-cohort/ehkwzuqadkc4hlnogkiu.jpg)
+
+Some of these tasks might be P1, might be really, really important and need to get done right now. Some of them might be just P2, and, you know, need to be done at some point and are very, very useful to have. And others are just the nice to have tasks that pop up in any backlog. 
+
+![backlog priorities](https://res.cloudinary.com/total-typescript/image/upload/v1773348243/ai-hero/claude-code-cohort/dy9fm4gzsoruk2dll94e.jpg)
+
+Now, if we think about Ralph as just like a machine that can take these tasks and complete them one by one, then our job really becomes backlog or queue management. 
+
+We as a human are just trying to queue up these tasks one by one for Ralph to complete, at least in the model that we currently have.
+
+Inside our prompt, we would manually need to pass a plan for each of these tasks. In other words, we are still in the loop. 
+
+## Let AI Handle Task Selection
+
+However, I don't think it has to be this way. I think that AI is smart enough that it can look at a backlog like this and figure out which task to do. In other words, AI can do this task prioritization and selection by itself.
+
+**This means that instead of passing a PRD and a plan, we should instead pass it an entire backlog.** 
+
+Now I'm not saying pass it hundreds of tasks at once, you probably need to do some manual prioritization or filtering. But I found that Ralph can easily take in **20** tasks at once, figure out which one to do and then churn out just that task. 
+
+![the loop](https://res.cloudinary.com/total-typescript/image/upload/v1773348244/ai-hero/claude-code-cohort/rntokmwwqbkmrvqwythk.jpg)
+
+In this setup then the agent produces code which the human then reviews, the human adds stuff to the backlog which the agent then sees and turns into more code. And the amazing thing about this is that this can happen in parallel.
+
+So the agent can be coding while the human is reviewing previous commits or just looking at the app in general and adding more things to the backlog. And the next question you're asking is where should this backlog live? Should it live as markdown files in the repo? 
+
+In my opinion, this backlog should live somewhere where human developers and human non-developers can look at it and read it. **So this backlog should live in your task management service.**
+
+## Where Should the Backlog Live?
+
+Linear is one that's extremely popular because I mean, what a beautiful UI Linear has. You could of course use a classic tool like Jira, but my favorite way of handling a backlog with Ralph is using **plain old GitHub issues**. 
+
+![github issues](https://res.cloudinary.com/total-typescript/image/upload/v1773348246/ai-hero/claude-code-cohort/vphbibl0bqfao1imxt8s.jpg)
+
+My main application, this course video manager, is the video editor that I edit all of my videos on. And as you can see I have closed 385 issues working on this backlog. A lot of these are quick wins like adding a keyboard shortcut, adding an `Open in VS Code` action.
+
+Some of these are bug fixes.
+
+> The OBS virtual camera shouldn't reset when navigating between pages.
+
+In fact let's just click into this and look at how much detail this has. It's not a huge amount of detail but as we can see the Ralph loop has come back and said
+
+> fixed
+
+![fixed issue](https://res.cloudinary.com/total-typescript/image/upload/v1773348247/ai-hero/claude-code-cohort/xjnbzkx8k10fhbs2zyp2.jpg)
+
+and referenced it in a commit. So this setup has been incredible for me and oh my god, I mean I've said this so many times in this section. But I really am so excited for you to see this.
+
+In the next exercise we are going to hook this up to GitHub. 
+
+Good luck, and I will see you in the next one.

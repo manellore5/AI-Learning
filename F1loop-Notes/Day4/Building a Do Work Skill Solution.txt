@@ -1,0 +1,87 @@
+# Building a Do Work Skill Solution
+
+Okie doke, let's run this and see what we end up with. 
+
+![prompt](https://res.cloudinary.com/total-typescript/image/upload/v1773337628/ai-hero/claude-code-cohort/fkqggogd9s9e9pkhdee2.jpg)
+
+Now it has of course entered an explore phase where it's exploring the repo structure and it's just checking out all the stuff it needs to. And as usual we'll check back in once it's complete. 
+
+![user directory instead of project](https://res.cloudinary.com/total-typescript/image/upload/v1773337632/ai-hero/claude-code-cohort/ymlqgvhuqi4oatjcjzqt.jpg)
+
+Okay, it's come back here and it's trying to put it inside my user directory instead of the project. I want this one to be in my project because it's kind of going to be tied to the structure of my project because it's going to ask for specific feedback loops.
+
+So I'm going to select no here and press tab to give it some more information and I'm going to say
+
+> put it inside the project directory instead.
+
+So let's run this and see what happens. Okay cool it's now doing it inside the project.
+
+## Reviewing the Generated Skill
+
+Okay, it's now come back with a skill here, which is inside do work inside the repo. 
+
+![skill](https://res.cloudinary.com/total-typescript/image/upload/v1773337634/ai-hero/claude-code-cohort/zfkscqrs1rgxxcmlwzdp.jpg)
+
+So we can see it's doing this nice little workflow here, where it's understanding the task, read any reference plan or PRD.
+
+It's then planning the implementation, then implementing the plan. I don't necessarily love that it's added all of this stuff to do with specific files in here. I don't think the convention stuff belongs here. 
+
+![specific files](https://res.cloudinary.com/total-typescript/image/upload/v1773337636/ai-hero/claude-code-cohort/vwbgnhf68yqb6ihfczkj.jpg)
+
+**You can be really, really concise with this do work skill**. You don't have to be too in depth here.
+
+## Editing the Validate Step
+
+Then it says validate. That's lovely. And it's doing this `pnpm run type-check`, `pnpm run test`. It's actually mentioning the things by name, that's important. Now we are repeating ourselves a little bit here.
+
+![repeating ourselves](https://res.cloudinary.com/total-typescript/image/upload/v1773337637/ai-hero/claude-code-cohort/v93zkllh2xev0sgadc85.jpg)
+
+We're repeating
+
+> until both pass cleanly. Do not move on until both commands pass with zero errors.
+
+In my experience you don't need to be that harsh with AI. Like this should be enough that it will just kind of continually run the feedback loops until it's all good. I also don't think we need the "if a failure is unrelated" section too.
+
+![if a failure is unrelated](https://res.cloudinary.com/total-typescript/image/upload/v1773337639/ai-hero/claude-code-cohort/e8rlypau0rdfx6laxk0m.jpg)
+
+I think we can just ignore that. That feels too much like the default behavior. Notice here I'm taking a light hand in steering it. I'm not steering it too harshly.
+
+> Once type check and test pass, commit the work.
+
+## Trimming the Commit and Planning Sections
+
+I don't care whether it uses imperative mood or not. In my experience you don't need to tell it to stage only the files you changed and in fact I generally don't want to give it any advice about the commit message like I don't care about the commit message that much even if it's super long actually that's really beneficial. 
+
+![commit message](https://res.cloudinary.com/total-typescript/image/upload/v1773337640/ai-hero/claude-code-cohort/csnhqmmqx5iqux6hx7bi.jpg)
+
+There's one other thing I want to tweak in here too which is just at the top this "plan the implementation" section. 
+
+![plan the implementation section](https://res.cloudinary.com/total-typescript/image/upload/v1773337641/ai-hero/claude-code-cohort/tkxcttsm5506yeuaoipm.jpg)
+
+Now this do work skill I could run it without creating a multi-phase plan first. Like I could run it on a small enough task that it would just be able to do it within a single context window.
+
+But most of the time I'm going to be running this do work on a large PRD or running it on a multi-phase plan. So I'm going to say that this section is optional. Because if we've already planned it then we don't need to re-plan it here. And I'm then going to change this top line to
+
+> if the task has not already been planned, create a plan for it.
+
+We could also optimize this section further by introducing stuff about tracer bullets and creating good plans.
+
+But to be honest, I'm kind of tempted just to delete all of this guff and have a really simple instruction here. I really really like concise skills like this.
+
+![simplified do work skill](https://res.cloudinary.com/total-typescript/image/upload/v1773337642/ai-hero/claude-code-cohort/vvqnkdspdhyd6ymjp9ww.jpg)
+
+## Keeping It Concise
+
+We're now down to just 35 lines. The really important part here is really just the headings, you know, this five-step workflow which will take it through: 
+
+1. Understanding the task
+2. Planning it
+3. Implementing it
+4. Validating it
+5. Committing it. 
+
+**Now I'm really interested in how your skill differed from mine.**
+
+Did yours look more verbose? What did you add in here that I didn't? I would love your thoughts on this in the Discord. But I bet you're now itching to test out this skill and see if it actually works, which we will do very soon. 
+
+Nice work and I'll see you in the next one.

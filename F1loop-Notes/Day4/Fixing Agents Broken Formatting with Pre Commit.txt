@@ -1,0 +1,85 @@
+# Fixing Agents Broken Formatting with Pre Commit
+
+<CommitMap>
+  <Commit id="06.05.01">
+    Added Husky pre-commit hooks with lint-staged configured
+  </Commit>
+</CommitMap>
+
+## Links
+
+- [Essential AI Coding Feedback Loops for TypeScript Projects](https://www.aihero.dev/essential-ai-coding-feedback-loops-for-type-script-projects)
+
+## Introduction
+
+This do work skill that we've been working on, you might notice that we are really encouraging the AI to use the feedback loops, but we're not enforcing that the feedback loops run on every single commit. 
+
+Wouldn't it be great if before every commit, we could just deterministically check if the repo is good, and if it's bad, then we report that back to the agent. 
+
+Well, guess what? 
+
+There is such a thing using **Git hooks**. Git hooks allow you to run a script when certain events happen within Git.
+
+## Pre-Commit Hooks
+
+![pre-commmit hooks](https://res.cloudinary.com/total-typescript/image/upload/v1773340777/ai-hero/claude-code-cohort/o25cv7q3zoeeehzyi6wx.jpg)
+
+For instance, here we have a pre-commit hook. This runs automatically before you commit, so we can run something that might fail like a type check or tests and put that inside the pre-commit hook.
+
+Now experienced developers are probably looking at this going, what? You're recommending pre-commit hooks? Are you crazy?
+
+Because pre-commit hooks are famously really annoying for human developers. Because human developers might want to push to the repo for all sorts of reasons, but they don't necessarily want to have to wait three minutes every time they commit for their types and tests to run. 
+
+But for an agent and for Claude, this doesn't matter because Claude doesn't care how long it takes to run the tests. It doesn't get frustrated by things taking a long time. It's just going to just wait and see what happens.
+
+**So the friction that's really painful for a human developer is actually perfect for an agent.** 
+
+And so in this lesson, we're going to set up a pre-commit hook that is going to deterministically enforce our feedback loops. 
+
+![copy as markdown](https://res.cloudinary.com/total-typescript/image/upload/v1773340780/ai-hero/claude-code-cohort/mjlgqlgkrezksfsw2po2.jpg)
+
+So all we're going to do is on the [Essential AI Coding Feedback Loops for TypeScript Projects](https://www.aihero.dev/essential-ai-coding-feedback-loops-for-type-script-projects) post, click on use with AI, copy as markdown, and then we're going to paste it inside a fresh Claude Code instance in the project and then just prompt "implement this in my project". 
+
+I'm then just going to shift tab so I accept edit on and we should be good to go. So it's detected that we've already got TypeScript, we've already got Vitest, it's now asking to install a couple of dependencies `husky` and `lint-staged`.
+
+![husky and lint-staged dependencies](https://res.cloudinary.com/total-typescript/image/upload/v1773340782/ai-hero/claude-code-cohort/a345ljedkag3w6cq5sqm.jpg)
+
+## Setting Up Husky and Lint-Staged
+
+`husky` basically helps us manage our pre-commit hooks in a really simple way. And it's now asking to execute `husky init`, which is what you want. `lint-staged` is a really nice command that only runs linting on staged files. This is going to be really, really useful in a second. It's then written three lines to `.lintstagedrc` here. This is the configuration file for `lint-staged`.
+
+![lint-stagedrc file](https://res.cloudinary.com/total-typescript/image/upload/v1773340783/ai-hero/claude-code-cohort/xtifgs72ihbaauguaegm.jpg)
+
+And what this basically says is on every single file that's staged, we are going to run Prettier on it. 
+
+Now **Prettier**, if you don't know, is a code formatter that basically means that your entire repo corresponds to a certain set of formatting rules that you encode locally. If you've never heard of Prettier, what are you doing with your life? It's the most incredible thing and it's been around for years. 
+
+But combined with `lint-staged`, we're basically making sure deterministically that the AI cannot commit unformatted code to the repo.
+
+## Verifying the Hooks
+
+Okay, it's verified everything works by doing a quick dry run and crucially it's also given us a file inside `.husky/pre-commit` which basically runs the three things that we've just been talking about. 
+
+![husky pre-commit file](https://res.cloudinary.com/total-typescript/image/upload/v1773340784/ai-hero/claude-code-cohort/lwl09ugbbdpfztlyzito.jpg)
+
+This now runs `npx lint-staged`, it runs `pnpm type-check` and it runs `pnpm run test`. This means that every time we commit, then these three are going to be run. So now I'm going to get it to commit the code here. And if we zoom down here, it looks like it's already completed its work.
+
+It added all the relevant files, it committed, and we can see that the pre-commit hook ran all three checks, `lint-staged` formatting, type check, and a bunch of tests and they all passed. 
+
+![committing successfully](https://res.cloudinary.com/total-typescript/image/upload/v1773340785/ai-hero/claude-code-cohort/ip9jdmbij6yorfj4c6pt.jpg)
+
+I'm now gonna say to it:
+
+> Test that the pre-commit hooks work by trying to push a commit with a failing test.
+
+And I'm gonna submit this and check that it works. So it's now gone into the coupon service and updated that and we can see that it's now staged the files and tried to commit but the commit was blocked. The hook caught the failing test:
+
+> expected X to have a length of 999 but got 5
+
+![failed test](https://res.cloudinary.com/total-typescript/image/upload/v1773340787/ai-hero/claude-code-cohort/wqqyufotofbfhij4w4xe.jpg)
+
+It's now gone back, updated the thing again, and it's now in fact going to restore the original test file which is good. 
+
+So there we go, that is exactly what we want. It caught the error and it prevented us from committing and it told the AI how to fix it. A beautiful deterministic feedback loop that you should have in every single project. 
+
+Nice work and I will see you in the next one.

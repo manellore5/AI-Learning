@@ -1,0 +1,55 @@
+# Setting Up and Trying AFK Ralph Solution
+
+All right, let's run it and see what happens. We can see the first thing that it emits is that the sandbox exists, but the VM is not running. The VM then started successfully, so it's starting the sandbox container and it's running it within the virtual machine. 
+
+![sandbox logs](https://res.cloudinary.com/total-typescript/image/upload/v1773347093/ai-hero/claude-code-cohort/jww4dqh9hl4gaoyts5p6.jpg)
+
+Now, Docker sandbox might look different to you. They might be emitting different logs, but you should see something like this.
+
+## Claude Code Working Autonomously
+
+Okay, and we can see that Claude Code is talking to us. It is saying
+
+> phase one is already complete per the commit history
+
+Beautiful. The next phase is phase two, revenue over time chart. We can see how useful the commit history is, like actively prompting the agent to see what's come before. Now it's just telling us kind of what it's up to really.
+
+![claude code talking to us](https://res.cloudinary.com/total-typescript/image/upload/v1773347094/ai-hero/claude-code-cohort/qybogasqegh9ye5e7dnw.jpg)
+
+Notice it's not making any permission requests of us. It's just going to its work. My dream is that someday Claude Code will add a feature that allows us to get actual nice UI out of this because currently it's fairly ugly, right? So where's it up to now? We can see it's now adding the tests for the `getAdminRevenueTimeSeries`, just nicely following the plan that we've laid down for it.
+
+If we take a look at the code that it's written by opening up the Git source control here, we can see the changes that it's making, adding stuff to the tests, adding stuff to the analytics service too. 
+
+![adding code](https://res.cloudinary.com/total-typescript/image/upload/v1773347096/ai-hero/claude-code-cohort/m5ub64gfw4njupq2hqhq.jpg)
+
+One thing we don't get, which I haven't actually figured out a way to fix yet, is to add the live context onto this view. And with the loop in its current state, observability is actually quite hard to do. It's hard to see exactly how many tokens are being used and whether it's succeeded or failed. Capturing all that in some kind of mechanism would be really interesting.
+
+## Skills Fixing Docker Issues
+
+![tests are failing due to native module version mismatch](https://res.cloudinary.com/total-typescript/image/upload/v1773347097/ai-hero/claude-code-cohort/wzpntxd7rrpwzzsih2oi.jpg)
+
+Now here we go, this is super interesting. The tests are all failing due to a `better-sqlite3` native module version mismatch. Now this is something that I noticed when I was building the app because I actually used Ralph to build the app. I used AFK Ralph. I noticed that between my setup and the Docker setup, when I ran `npm install` kind of locally it would install the native module differently. So I added the skill inside `.claude/skills/better-sqlite-rebuild`.
+
+![adding skill](https://res.cloudinary.com/total-typescript/image/upload/v1773347098/ai-hero/claude-code-cohort/xfwjiqk7eexyxanu7xul.jpg)
+
+So this is a very satisfying moment for me because inside the Docker container it is picking up the local project-based skills and those skills are then steering its behavior to actually fix issues it's seeing. So this is one of the downsides of Docker Sandbox: it is a different environment to your environment. However we can see that thanks to the skill it was able to rebuild successfully and it ran the test again. 
+
+![phase 2 complete](https://res.cloudinary.com/total-typescript/image/upload/v1773347100/ai-hero/claude-code-cohort/pqi0iafekuykdpuczrle.jpg)
+
+Okay, and phase two is complete, and the last thing it emits is a kind of big description of all the things that happened and changed. If we take a look inside the git commit history too, by running `git log` here, we can see the commit that it added.
+
+![commit message](https://res.cloudinary.com/total-typescript/image/upload/v1773347101/ai-hero/claude-code-cohort/ho51wvft5jpujurzv21n.jpg)
+
+## QA and Results 
+
+This is a really nice detailed commit that adds the key decisions and the files changed and even recommends what to do next. So it's almost as if it's prompting itself what to do next, which is just incredibly helpful. 
+
+I'm gonna QA this by switching to Alex Rivera. I'm gonna go to the dashboard, go to analytics, and now we can see revenue over time. If we switch to 12 months then it should show a different chart.
+
+![revenue over time](https://res.cloudinary.com/total-typescript/image/upload/v1773347102/ai-hero/claude-code-cohort/s85pgbmoi1ax6oholaea.jpg)
+
+How about all time? Yes, looking lovely. So there you go, we have created a new feature completely AFK. No permissions requests, nothing asked of us. It was able to figure out and steer itself with the skills that we provided, use the feedback loops that we got in place to make sure its work was good, and all of that just from a PRD, a plan, and a relatively simple prompt and a bash loop.
+
+**For me, I feel that this is the future of development and it's very, very cool**. 
+
+Nice work and I will see you in the next one.

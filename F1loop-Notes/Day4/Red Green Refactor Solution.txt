@@ -1,0 +1,97 @@
+# Red Green Refactor Solution
+
+Okay, let's start by modifying our do work skill. 
+
+![modifying the do work skill](https://res.cloudinary.com/total-typescript/image/upload/v1773342729/ai-hero/claude-code-cohort/pthe4a3bugy88w7ydnon.jpg)
+
+The cool thing about TDD and Red Green Refactor is that models kind of really know what it is. You don't need to point them to external docs. And so we can already see it has asked to modify the setup here. Okay, cool.
+
+So it's given us quite a lot of text here. I'm looking at the "for front-end code" section immediately. This just looks really long to me. I think we can say, just cut that down and say implement directly without PRD. I think it knows what front-end code is so we can just pare it down to that little sentence.
+
+![pared down do work skill](https://res.cloudinary.com/total-typescript/image/upload/v1773342730/ai-hero/claude-code-cohort/krc4t1vxe9gsjra2elan.jpg)
+
+I do like this, I think it already understands what backend code is, I don't need this extra pair of parentheses. For backend code use Red Green Refactor. I'm looking at this little list here and I can see that it says "refactor" and then "repeat from step one." 
+
+I'm actually going to swap these two things here. So I'm going to get it to repeat from stage one to continually do red, green, red, green, and then do one refactor step at the end.
+
+![swapped refactor and repeat from step one](https://res.cloudinary.com/total-typescript/image/upload/v1773342731/ai-hero/claude-code-cohort/c7qdof8dcqxvpbckzcil.jpg)
+
+I'm also going to return these parentheses. I don't think these examples are actually that helpful. I think more vague guidance is better. We're just trying to tickle the latent space of the LLM really just to say do Red Green Refactor, here's a list of things you should do. But overall this looks good to me.
+
+![pared down fully](https://res.cloudinary.com/total-typescript/image/upload/v1773342732/ai-hero/claude-code-cohort/p2slclh4c5aoqf0nghzw.jpg)
+
+I'm going to commit this, say "made changes to the do work skill" before I actually go and implement. 
+
+Okay, let's close this up and I'm now going to run `clear` inside my Claude Code instance to make sure I've got a clean context for the next bit. So I'm first gonna pull in the PRD, then I'm gonna pull in the plan, and then I'm gonna go a couple of spaces down and I'm going to say `do work`, and then I'll tell it just down here "do phase one." 
+
+![running the implementation](https://res.cloudinary.com/total-typescript/image/upload/v1773342734/ai-hero/claude-code-cohort/ofz0urvafhdzibicdbr6.jpg)
+
+And let's see how this goes. It's nice that it starts off here with two explore agents.
+
+![couple of explore agents](https://res.cloudinary.com/total-typescript/image/upload/v1773342736/ai-hero/claude-code-cohort/yj0owcoujaiyxj9oytfd.jpg)
+
+## Running the Implementation 
+
+It's exploring the notification system and exploring the coupon system. Very cool. Before I forget, I'm gonna put it on Shift+Tab so I accept all that it's on. And here we go, we've got our first TDD mentioned here.
+
+> Let me create tasks and start implementing with TDD.
+
+Okay, it's continuing implementing and it's starting to use TDD.
+
+> Let me write the first failing test first.
+
+Yay! It is, I have to say, writing more than one test here. So it's actually written multiple tests inside here.
+
+So I suppose it must be quite confident about the implementation. It's sort of rushing ahead a little bit. We can see it's referencing the red phase and indeed the tests do fail. 
+
+![failing test](https://res.cloudinary.com/total-typescript/image/upload/v1773342737/ai-hero/claude-code-cohort/fpeghll7krwv7yxs00le.jpg)
+
+So it's now heading towards the green phase where it's going to actually implement them. We can see it's adding code to the coupon service which is expected and now, yeah, all tests pass.
+
+Now it's going to update the front end. Okay, if we zoom down, we can see that it then, finally, once it sort of did everything, it's now validated with the type check and the tests. So it's running the feedback loops as kind of a final check before it actually goes and commits. 
+
+![running the feedback loops](https://res.cloudinary.com/total-typescript/image/upload/v1773342739/ai-hero/claude-code-cohort/miz0lhksmu4r0bhxlooz.jpg)
+
+Then it's adding the code and it's asking me for permission because it looks like there's some dodgy stuff in there or a command substitution. 
+
+The feedback loops ran just one more time inside the pre-commit hook there as well.
+
+## Verifying the Feature
+
+And so we are looking good. So I've logged in as Liam Thompson here, who's just a student, and I can go into Introduction to TypeScript and I can buy more seats. I'm gonna be a big spender and I'm going to buy five seats here. And I end up in my team management section where I can distribute these tokens. So I'm gonna copy and paste the first code here and just copy the link.
+
+![logging in as Liam Thompson](https://res.cloudinary.com/total-typescript/image/upload/v1773342741/ai-hero/claude-code-cohort/xm4uqmly4jt61ka8fst0.jpg)
+
+Then I go to the bottom left, I'm going to log out of Liam Thompson, I'm going to sign up as a new user. So I'll go with Matthew Pocock as my name and then I'll put in an example email. When I sign up here then I should be able to go into the URL bar and paste the link that I got from Liam Thompson and redeem this course. 
+
+![redeeming the coupon](https://res.cloudinary.com/total-typescript/image/upload/v1773342742/ai-hero/claude-code-cohort/dcxjwakeora4zig3dnsz.jpg)
+
+I can then click enroll now and I should be able to start learning from here. Now, if I go back into Liam Thompson, then Liam Thompson, yes, has a notification.
+
+> Matthew Pocock redeemed a coupon for Introduction to TypeScript and there are four of five seats remaining.
+
+![notification](https://res.cloudinary.com/total-typescript/image/upload/v1773342743/ai-hero/claude-code-cohort/weguse8dchzvqsaqteqn.jpg)
+
+And I can see that by clicking on the notification and heading into here. 
+
+![dashboard](https://res.cloudinary.com/total-typescript/image/upload/v1773342744/ai-hero/claude-code-cohort/jhgxmllaethknjw6ocrx.jpg)
+
+So I would say not too shabby. Now because this is a relatively simple feature, we might have gotten the same quality here without TDD. 
+
+But what I definitely feel having done this for a few months now is that TDD and Red Green Refactor, because AI is so patient at creating the tests, because they create a huge network of feedback loops that the AI can rely on, they increase the likelihood that AI is going to one-shot the feature as it just did. 
+
+So I freaking love it, I'm a huge fan.
+
+## Refining the Skill
+
+Now one thing I did notice that does concern me a bit is that it didn't follow our instruction to do tracer bullet tests. 
+
+So what I would do if I was working on this on a real application is I would go back into my skill and try to really emphasize the tracer bullet approach. 
+
+**And if you like, you can do that now.** 
+
+So what did you notice that was different from my outcomes to your outcomes? How does your skill differ from the one that I produced?
+
+All good questions that can be asked right now on the Discord. 
+
+Nice work, and I will see you in the next one.
