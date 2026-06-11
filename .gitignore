@@ -11,3 +11,6 @@ venv/
 *.vtt
 tmp/
 .tmp/
+
+# Per-machine Claude Code settings (not shared)
+.claude/settings.local.json
