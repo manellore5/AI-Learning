@@ -1,0 +1,47 @@
+There's a common question that comes up again and again when I do these courses. And so I wanted to add a little appendix here to talk about Greenfield projects specifically. If you've never heard this term before, Greenfield is when you're starting in a new project where there is nothing there before you. The field is green, it has not been built on yet. Brownfield means that the field has maybe something on it, you know, you're building in an existing setup.
+
+00:23 This might be a legacy code base that you already have or it might need to integrate with stuff that's already there, in other words there's stuff on the ground already that's impacting what you're doing and where you're going. Most of the work we've been doing in this cohort has been brownfield. I've given you an existing application and we are working within the constraints of that application using preexisting patterns in the code base, kind of working on stuff that's already there from a pretty solid base. But how do you start when there's nothing to start from? How do you start from a blank page?
+
+00:55 Well the first thing I start with is a grilling session. I have some kind of vague idea that I need to start hammering out and I chat with the agent about it. From there, I would then take this and save this into research files. So anything that I capture during those grilling sessions would be saved usually in the early phases as markdown documents in the repo itself. The idea is I would have multiple grilling sessions continually refining my idea for what we're trying to build and save the output of those into Markdown documents so that we build up this kind of almost like a code base but of Markdown documents with decisions that we've made.
+
+01:32 From there, I would start to look at prototyping. So I would take some of the research questions I had, I would turn them into prototypes. Maybe those prototypes would get reused, maybe they would just get sort of saved in the code base as prototypes, and then I would continue to iterate on those. So I would start to get a clearer picture of the thing that I actually wanted to build. Once I would have that clear picture, then it's time to start writing the product requirements document.
+
+01:57 And this will look a little different in a greenfield code base to a brownfield code base. To understand why, we need to talk about these two pieces of terminology. We have UX and AX here. UX here means user experience, so the experience of the end user. And in a brownfield code base, we've usually got all of the fundamentals nailed down and we can start focusing on the user.
+
+02:19 But in a Greenfield codebase, we are really starting, like the first thing we need to think about is the AX, the agent experience, the experience of the agent working in the codebase. So that means our first product requirements document not only needs to specify some UX stuff, some kind of end-facing user experience goals, but also we need to focus on the agent experience, focusing on the feedback loops, focusing on the languages that we're using, on the technologies that we're using. Let's actually list these out so we understand more what we mean. We need to first look at the feedback loops, the types and the tests and the pre-commit hooks that will, and the formatting as well, that will make sure that the agent is producing high quality code. We need to talk about technology choices.
+
+03:04 These are often really difficult decisions that are difficult to swap out of later. We need to figure out what language we're going to use, what front-end framework we're gonna use if we're building a front-end app. And that's really important to grill on with the agent. We may need to think about the module shape, the initial shape of the modules, the deep modules that we're going to create, because we know how important code-based architecture is to agent experience. And Finally, we need to look at the testing strategies as well.
+
+03:32 So which ties into the module shape really. What things are we going to mock? Are we gonna use a test database? All of this stuff will mean that we're producing higher quality code from the get-go. So that means that your first PRD is really crucial because you will probably need a PRD for the AX before you even look at the UX.
+
+03:51 Now, of course, what you're building will influence your technology choice, will influence your testing strategy, and will definitely influence your module shape. So you can't sacrifice AX for the sake of UX, they need to be tied together. The thing that you're building needs to feed into the way that you build it. But once you've got your AX sorted, often via its own PRD, then you can start going through implementing issues, grabbing all this, doing reviews, and we're back into essentially a brownfield codebase. So really I think of the difficulty of setting up a greenfield codebase is really just setting up the agent experience.
+
+04:25 Once that's done then you can just immediately start going through the loop that we've talked about throughout this entire course. Hopefully that makes sense. If you have any more questions, then do ask them in the Discord. I think this is a particularly juicy topic to grill on together. How about that?
+
+04:40 Nice work, and I will see you in the next one.
+
+---
+
+Companion article (web):
+
+# Appendix: Greenfield Projects
+
+A common question comes up again and again when building projects: what's the difference between greenfield and brownfield development?
+
+Greenfield is when you're starting a new project where there is nothing there before you. The field is green, it has not been built on yet.
+
+Brownfield means the field has something on it already. You're building in an existing setup, perhaps a legacy codebase that needs to integrate with what's already there.
+
+Sequence: grilling session -> research documentation (markdown in repo) -> prototype -> PRD.
+
+UX = User experience (end user). AX = Agent experience (the agent working in the codebase).
+
+In brownfield, fundamentals are nailed down so you focus on UX. In greenfield, the first thing to think about is AX. The first PRD specifies some UX goals but focuses heavily on AX: feedback loops, languages, technologies.
+
+Agent experience essentials:
+- Feedback loops: types, tests, pre-commit hooks, formatting.
+- Technology choices: language, front-end framework; hard to swap later, grill thoroughly.
+- Module shape: initial shape of modules / deep modules; architecture is crucial to AX.
+- Testing strategies: what to mock, test database; ties into module shape.
+
+AX-first: you probably need a PRD for AX before UX. What you build influences tech choice, testing, and module shape, so AX and UX are tied together. Once AX is sorted, you're back into the brownfield loop.
