@@ -1,0 +1,13 @@
+﻿# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Whisper model cache / temp workdirs
+*.mp3
+*.wav
+*.srt
+*.vtt
+tmp/
+.tmp/

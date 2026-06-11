@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install *)",
+      "PowerShell(python --version; python -m pip --version)",
+      "PowerShell(Get-Command *)",
+      "Bash(pip --version)",
+      "Bash(yt-dlp --version)",
+      "Bash(ffmpeg -version)",
+      "Bash(git --version)",
+      "Bash(git -C \"D:/AIlearning\" rev-parse --is-inside-work-tree)",
+      "Bash(git -C \"D:/AIlearning\" remote -v)",
+      "PowerShell(python -m pip install -r D:\\\\AIlearning\\\\requirements.txt)",
+      "PowerShell(winget install *)",
+      "Bash(whisper\" ; echo \"---\"; ls \"C:\\\\Users\\\\manel\\\\AppData\\\\Local\\\\Python\\\\pythoncore-3.14-64\\\\Scripts\\\\yt-dlp.exe\" 2>/dev/null && echo \"FOUND in pythoncore Scripts\")",
+      "PowerShell(gh repo *)"
+    ]
+  }
+}
