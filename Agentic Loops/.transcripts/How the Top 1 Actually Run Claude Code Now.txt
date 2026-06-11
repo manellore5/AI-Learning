@@ -1,0 +1,390 @@
+Okay, so over the last 24 hours, almost\h
+everyone has been having a paradigm shift\h\h
+where they realize that they should no longer be\h
+prompting their agents, but instead prompting and\h\h
+designing loops that in turn prompt their agents\h
+for them. Now, this was started last week because\h\h
+Brosz Czerny said this in an interview. Now\h
+it's actually leveled up, I think, again to\h\h
+the next wave of abstraction where I don't prompt\h
+Claude anymore. I have loops that are running.\h\h
+They're the ones that are prompting Claude and\h
+kind of figuring out what to do. My job is to\h\h
+write loops. And then this was repeated again\h
+by the creator of OpenAI saying that you should\h\h
+be designing loops that prompt your agents. Now\h
+what's causing a lot of frustration with people\h\h
+is that no one has taught folks how to do this. It\h
+feels both evidently the future and also somehow\h\h
+gatekept. So I'll be focusing on the higher level\h
+picture and then going through a few examples\h\h
+inside of this video. Now before getting started,\h
+I wanna quickly mention that I have been teaching\h\h
+this for over 3 months inside of my masterclass.\h
+So I made a bunch of videos about this back in\h\h
+February and I'm still making more. And I have\h
+been running loops pretty much every single day.\h\h
+So for example, I ran this loop that ran for\h
+about 19 hours and verified over 500 different\h\h
+user flows inside my new application. And then I\h
+ran another loop after that that basically fixed\h\h
+a whole bunch of the issues that the previous loop\h
+identified over the course of 11 hours. Now before\h\h
+reaching this level, let's quickly go back to\h
+where we were. So about a year, 2 years ago,\h\h
+we were hand coding with AI autocomplete. So\h
+we would be writing in like a line of code\h\h
+and then it would complete the function for\h
+us. And then about a year ago, 6 months ago,\h\h
+we started juggling many different agents\h
+together. So you've probably seen people with like\h\h
+6 different agent windows open and they're jumping\h
+between each of them, prompting one after another,\h\h
+but they're still inside of the loop of each\h
+agent actually prompting each one individually.\h\h
+Now most people are at stage 2 and if you are\h
+at that stage and completely happy with that,\h\h
+then you can end the video right now.. But if\h
+you wanna move on to stage 3, kind of like Boris,\h\h
+then you gotta be writing loops. Now Boris has a\h
+couple different loops that he mentioned in the\h\h
+video. He didn't go into too much detail about\h
+it, but he has some that look through GitHub,\h\h
+find any issues, flag those issues and make any\h
+fixes. He has other ones that go through Slack and\h\h
+identify what other people are doing. And then\h
+he also has some that go through Twitter as well,\h\h
+different agents running on a loop that kind of\h
+decides what to build next for Claude Code. Now\h\h
+to give you a really simple example of a loop that\h
+I have running is a scheduled task where every 24\h\h
+hours it looks through Sentry, identifies\h
+any issues affecting more than 20 users,\h\h
+and then automatically creates a brand new\h
+PR fixing that particular issue. And besides\h\h
+Claude Code routines, we've seen this in a couple\h
+of different ways. So we have the /loop command\h\h
+inside of Claude Code. We also have /goal,\h
+which I made a previous video about inside\h\h
+of Codex and Claude Code. So what I showed\h
+you previously where Claude Code tested over\h\h
+300 user flows over 19 hours, that was a slash\h
+goal. And in the case of that loop, I had Claude\h\h
+Code automatically do a screen recording\h
+for every single user flow that it tested,\h\h
+and it stored it all into a folder over here.\h
+So I can just watch through all the recordings\h\h
+and make sure that it did a good job. So\h
+here is one of the recordings that it did,\h\h
+where it's basically testing out this like lead\h
+collection modal. We have also seen this in the\h\h
+form of Andrej Karpathy's AutoResearch, where we\h
+have a loop optimizing some code and then scoring\h\h
+it against a benchmark. And if the optimization\h
+led to a better result, it would keep it. If not,\h\h
+it would discard it. And interestingly enough,\h
+Microsoft have also applied the same idea of like,\h\h
+what if instead of changing code, we changed\h
+agent skills instead and had self-improving\h\h
+agent skills? I'll have a separate video about\h
+this coming soon, so do stay subscribed for that.\h\h
+But I have also been using auto research\h
+quite a lot recently in the form of /goal,\h\h
+whereby I was basically optimizing Gemma 4 to\h
+run locally on my machine. And you can see that\h\h
+it tried a whole bunch of things and then it kept\h
+what worked and reverted what didn't work. And we\h\h
+saw this in a different form in January by having\h
+the RALPH loop. So we would break down a big task\h\h
+into many small tasks and then do each in a brand\h
+new context window. But the same principle still\h\h
+applies whereby we have some kind of trigger and\h
+that can be a prompt, a time of day, or like an\h\h
+event happening at a data source. We would have\h
+some kind of variation running and that could be\h\h
+a goal/loop, auto research, a RALPH loop. We would\h
+check whether it's done and if it's not done,\h\h
+then it would basically repeat again. Okay,\h
+now let's go for a more concrete example of\h\h
+something you may have been doing until now. So\h
+you may have worked back and forth with a coding\h\h
+agent to come up with a spec. And once you have\h
+that ready, you then tell the agent like, "Hey,\h\h
+implement this for me please." And this would\h
+be your prompt. And then after it's implemented,\h\h
+you may say like, do /code-review, or you may have\h
+another code review skill. So we already have one\h\h
+inside of Claude Code, which is /code-review, and\h
+it would spin up a bunch of subagents and find any\h\h
+issues with the implementation. And then next\h
+up, you would prompt it and be like, Hey, hey,\h\h
+fix these issues for me. So fix these issues\h
+for me. And then after it's fixed the issues,\h\h
+you may do another code review and you may kind\h
+of like go back and forth between these two stages\h\h
+2 or 3 times until you're happy. Then you may\h
+have prompted it again being like run the tests,\h\h
+open like Claude in Chrome, for example. And\h
+then it would open Claude in Chrome, test it out,\h\h
+do everything for you, maybe record some like\h
+screen recordings for you to check later. And\h\h
+then for anything that's broken, it would then fix\h
+those issues again. So you can see right now we\h\h
+already have two loops happening that you're kind\h
+of doing manually and you're driving manually.\h\h
+So we have this loop over here of the code review\h
+fix going back and forth. And then we have another\h\h
+loop over here of the verification, like fix going\h
+back and forth. And then you would say something\h\h
+like open and merge PR. And then you may prompt\h
+your agent after the PR has been merged, saying\h\h
+something like /loop 2 minutes check for errors.\h
+So like check if there are any increase in errors\h\h
+because this feature has now been merged. And then\h
+if it identified some kind of error, you may have\h\h
+prompted it being like, okay, cool, fix this error\h
+for me. So you can see in this white text, this is\h\h
+where you're prompting Claude Code, Codex every\h
+single time. And then when it fixes the error,\h\h
+it may go back over to the implementation stage\h
+right all the way over here. So you can see this\h\h
+is now a bigger loop that's happening. Now, if\h
+you have been doing something like this until now,\h\h
+you are in the middle of a manual loop and a unit\h
+of work for you was the prompt itself. But now if\h\h
+we're moving on to stage 3, we want to have a unit\h
+of work being the loop itself rather than just a\h\h
+prompt. So we have an input and then it goes\h
+through the cycle that we just showed and then\h\h
+it makes an output which can be a merged PR and\h
+some screen recordings that you can be confident\h\h
+to know the feature works. So essentially this\h
+entire process over here should be one big loop\h\h
+instead. So we have some smaller loops which\h
+are inside of this bigger loop and our input,\h\h
+so loop over here is a spec that we will still\h
+write ourselves because we want to kind of decide\h\h
+how a feature should look. And then the output of\h
+the loop here would be a screen recording with a\h\h
+merged PR to show the feature works as intended.\h
+And this is exactly what the BigLabs are talking\h\h
+about. We should be designing a system kind of\h
+like this, a loop, which is now a single unit of\h\h
+work. So all of this here is now a unit of work.\h
+And of course you don't have to design a loop like\h\h
+this alone. You can design it with the help of\h
+an agent. So you decide what the inputs would be,\h\h
+which can be a spec, what kind of actions they\h
+would take, what kind of checks they would do,\h\h
+where any memory would be stored, when it\h
+would exit the loop and decide that it's done,\h\h
+and then where it would surface anything that has\h
+been done for you. So that could be by sending you\h\h
+a Telegram message, it could be sending you a\h
+message on Slack or something else. So you can\h\h
+kind of imagine at the very end of this loop over\h
+here, our agent sent us a message on Slack with\h\h
+releasing a brand new class in my masterclass\h
+all about agent engineering. Called Loopy AI.\h\h
+And I have been working on this for the last\h
+couple of weeks because I noticed that this\h\h
+was going to be the future. So if you wanna go\h
+into much more detail in a lot of the concepts,\h\h
+then this class will be available on\h
+Monday next week. And if you sign up now,\h\h
+then you can get 30% off lifetime. By signing up,\h
+you also get access to all the previous videos,\h\h
+about 300 that I made about Claude Code, Codex,\h
+a bunch of fundamental and advanced techniques.\h\h
+When it comes to using these agents, context\h
+engineering, prompt engineering, and a bunch\h\h
+more stuff. Many people have found a lot of what\h
+I covered in the class to be many months ahead of\h\h
+the curve, and you may find that too. So the Loopy\h
+AI class will be exactly like that because this\h\h
+is a direction we're going to be seeing going\h
+forwards. And finally, for the Loopy AI class,\h\h
+there will be some live office hours that you\h
+can bring your questions if you're interested,\h\h
+and there is also a 30-day money-back guarantee if\h
+you don't feel satisfied for whatever reason. Now\h\h
+experimenting around, learning a bunch, and then\h
+sharing my insights in this class will be my focus\h\h
+for the next couple of months. So if you wanna\h
+sign up now at a discount, then the link will\h\h
+be down below. Now we wanna take this loop to the\h
+next level, and that would be by making an outer\h\h
+loop that manages the inner loop. So we can kind\h
+of imagine it like this. So the inner loop that we\h\h
+defined earlier is basically implementing a spec,\h
+but we may want like new specs being regularly\h\h
+delivered to the inner loop to implement. And\h
+we could have another loop that is monitoring\h\h
+our competitors. So it automatically goes to our\h
+competitor's website, notices any new feature that\h\h
+was added, and then automatically passes this into\h
+the inner loop to then implement that feature.\h\h
+So essentially the outer loop to our inner loop\h
+could look something kind of like this. We check\h\h
+our competitor's LinkedIn, X, their changelogs\h
+every single day to know when they announced a new\h\h
+feature. We then use like browser use or computer\h
+use to click around and find out how the feature\h\h
+works. We could also inspect like network logs and\h
+stuff like that. And then based on that, we would\h\h
+write a brand new spec being like, hey, we'll\h
+implement the same feature ourselves as well. So\h\h
+this could also be another smaller inner loop as\h
+well, where we have a good inner loop for writing\h\h
+specs. Then we may have some kind of a human in\h
+the loop to approve. And if you do approve it,\h\h
+then you trigger the inner loop that would then\h
+trigger the entire build for us, this build\h\h
+over here. And if you don't approve it, then it\h
+would just wait until tomorrow. Okay, so let's go\h\h
+through two more examples of inner loops and outer\h
+loops. So you may have an inner loop running /goal\h\h
+to kind of find performance improvements for an ML\h
+model that you're working on. And then you would\h\h
+have an outer loop that monitors archive.org every\h
+single day for any new strategies that may apply\h\h
+to the ML model you're working on to get better\h
+performance. So it could look something kind of\h\h
+like this. Anytime it finds a new strategy, it\h
+passes it down to inner loop.. And then once\h\h
+an inner loop like beats your existing strategy\h
+by a certain like percentage, then it will notify\h\h
+you on the channel you care about, like Slack.\h
+As a non-technical example, let's say you're\h\h
+running some kind of cold email campaign. You may\h
+have some kind of inner loop that is doing auto\h\h
+research to improve the email copy on 10% of the\h
+list. And that would be like asking for feedback,\h\h
+human in the loop kind of every single day. And\h
+then you would have a longer-term outer loop\h\h
+that may run every single week. And it monitors a\h
+bunch of fake inboxes that you set up to receive\h\h
+campaigns from any competitors in your niche. And\h
+that could be feeding into the inner loop to kind\h\h
+of see if it would beat your existing campaigns in\h
+a way. Now, every single time a loop runs, it will\h\h
+be stateless, which is why we want to have memory\h
+for our loops. Now, this could be some kind of\h\h
+file system or Git, for example. So the loop that\h
+I have set up to fix Sentry issues every single\h\h
+day, it knows which ones have already been fixed\h
+yesterday. Because it can just look at the commits\h\h
+from yesterday. But it could also be an external\h
+memory layer, kind of like Slack or Airtable. So\h\h
+you may have Airtable set up and then you connect\h
+it to your Claude Code schedule routine via the\h\h
+connectors over here. And then when you define\h
+your loop inside of the instructions over here,\h\h
+you would tell it, hey, first, can you check\h
+the Airtable to make sure that we haven't done\h\h
+this before? Now, one thing I personally like\h
+to do is to have Slack as a memory layer and\h\h
+a decision surface for many of my longer-term\h
+loops that would run every day or every week,\h\h
+for example. So I have a channel over here which\h
+is for optimizing my landing page in this project,\h\h
+and then I have many different channels, each\h
+belonging to a different loop. Now I have a bot\h\h
+that automatically posts to channel, so this one\h
+is analyzing my landing page and be like, hey,\h\h
+these are some of the issues, here are some of the\h
+recommendations I have for fixing them, and uplift\h\h
+by fixing them. So for example, it says, okay,\h
+do this. And every time the loop runs, it can\h\h
+see any previous messages that it sent yesterday.\h
+And then I can also make decisions from here. So\h\h
+I like this suggestion over here, which is number\h
+4. I can basically right-click, do add reaction,\h\h
+choose number 4. And then the next time the\h
+loop runs, it will look at the previous message,\h\h
+my reaction to it, and then make that change and\h
+automatically send a message. To that channel. So\h\h
+this is both a memory layer for the loop, 'cause I\h
+can see the previous messages, and also a decision\h\h
+surface for me because I can leave reactions,\h
+which automatically tell it like what it needs to\h\h
+be doing next. Now memory is really great for our\h
+loops because it means that they can compound over\h\h
+time. But one of the problems with that is that\h
+we can have our slop compounding as well. So if\h\h
+you don't keep your loops in check, you can just\h
+lead to way more slop over time. And this is one\h\h
+of the problems that many people face. And the way\h
+that I see it is that entropy is slowly increasing\h\h
+over time anyway. And agents, because they can do\h
+a lot of work, basically collapse that into a much\h\h
+shorter time. So the amount of entropy we're\h
+facing on a day-to-day basis is much greater than\h\h
+it was like 2 years ago. And there are a bunch of\h
+things that you can do about it. So for example,\h\h
+you can have outer loops that can kind of ground\h
+like your inner loop that is increasing entropy\h\h
+in like external sources, for example. But one\h
+thing that I like to do, especially when it comes\h\h
+to coding, is having adversarial code reviews. So\h
+for example, the reason I have this code review\h\h
+in the previous loop redefine over here and the\h
+verification step is to reduce the entropy from\h\h
+increasing a lot over time. So ideally you want\h
+some kind of oracle outside of the model, and that\h\h
+could be like test passing, the real production\h
+errors, Stripe revenue, like actual reply rates,\h\h
+for example, that kind of keeps the loop in check\h
+and prevents slop from accumulating. Now the way\h\h
+that Boris kind of talks about this is that loops\h
+are the next evolution. So he kind of talks about\h\h
+punch cards being a thing in the 1940s. Then we\h
+moved up one layer to assembly, and then we moved\h\h
+up to higher level languages like C, and then we\h
+moved over to libraries and frameworks like Rails,\h\h
+Next.js, and so forth. And then we moved over to\h
+prompts, and now we finally have loops, which are\h\h
+then running our prompts for us. So eventually\h
+you stop being the thing that runs You design\h\h
+the thing that runs and the leverage moves up one\h
+more layer. And I think one thing that we will be\h\h
+seeing over the next couple of months is having\h
+loops that check up on your work and your loops\h\h
+to find opportunities for future loops. So it's\h
+kind of like having a meta loop. So for example,\h\h
+when making this loop, you may give it access\h
+to everything inside of your organization,\h\h
+as well as the ability to view existing\h
+loops. And then it could kind of identify\h\h
+which loops are working and making impacts\h
+on the bottom line. Which are not working,\h\h
+and then also create new loops for you as well,\h
+with your approval, of course. And I don't think\h\h
+we've quite reached the stage where the models\h
+have enough taste to decide what should be good\h\h
+loops and not good loops, for example. So maybe\h
+it would give you like 10, 20 recommendations and\h\h
+then you apply your own taste and filter it down,\h
+for example. But if you do want to compound over\h\h
+the next couple of months, then this is what\h
+you should be thinking about. Now, of course,\h\h
+this can end up using a bunch of tokens if you're\h
+not careful and wasting them. So that's why, like,\h\h
+you got to be mindful of like, hey, are these\h
+tokens actually economically valuable? Are\h\h
+they making a difference to my bottom line\h
+for my business over here? So for example,\h\h
+in this situation I used 4.1 million tokens, but\h
+I know these tokens were economically valuable\h\h
+because I will make more money back from the\h
+kind of work that was done here than the amount\h\h
+of money that was spent on the tokens. Anyways, if\h
+you do like this kind of stuff, then do subscribe\h\h
+to the channel because I only upload videos when\h
+I feel like there's something worth saying. And\h\h
+if you do want to stay in the loop, quote unquote,\h
+you can also join my email newsletter that will be\h\h
+linked down below. And remember that if you\h
+do want to save money on my Loopy AI class\h\h
+that will be launching next week, then there\h
+will be a link down below for that as well.
