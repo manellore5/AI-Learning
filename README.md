@@ -10,7 +10,7 @@ Browse everything from [`INDEX.md`](INDEX.md).
 INDEX.md                         ← master index of every course (auto)
 <Course>/                        ← one top-level folder per learning (may be nested)
   INDEX.md                       ← index of notes in this course (auto)
-  <Note Title>.md                ← url + glossary + key notes + Mermaid diagram
+  <Note Title>.md                ← url + summary + glossary + key notes + Mermaid diagram
   .transcripts/<Note Title>.txt  ← raw transcript (hidden; kept for regeneration)
 scripts/                         ← the pipeline tooling
 .claude/skills/learn/SKILL.md    ← the /learn skill

@@ -17,9 +17,10 @@ Example: `/learn https://youtube.com/watch?v=abc123 --course "Andrew_Ng_DeepLear
 
 One self-contained markdown file per video at `<Course>/<Title>.md` with:
 1. YouTube URL (clickable, at the top)
-2. Glossary table
-3. Key Notes (chapter-aware for long videos)
-4. Mermaid `graph TD` understanding diagram
+2. A 4–5 line **Summary** (quick "what's this about" reference)
+3. Glossary (bold-term format with `_Avoid_:` aliases)
+4. Key Notes (chapter-aware for long videos)
+5. Mermaid `graph TD` understanding diagram
 
 Plus the raw transcript saved to `<Course>/.transcripts/<Title>.txt` (hidden folder, so notes can be regenerated later without cluttering the index).
 
@@ -54,10 +55,16 @@ Follow these steps in order:
 # <Video Title>
 Source: <url> · Course: <Course> · Added: <YYYY-MM-DD>
 
+## Summary
+<4–5 lines, plain language: what this video is about and what you'll take away. Written so a future reader can decide in 10 seconds whether to open it.>
+
 ## Glossary
-| Term | Definition |
-|------|------------|
-| <term> | <one or two tight sentences> |
+**<Term>**:
+<One or two tight sentences — define what the term IS.>
+_Avoid_: <alias>, <alias>
+
+**<Term>**:
+<Definition.>
 
 ## Key Notes
 ### <Topic or Chapter Title>
@@ -73,7 +80,9 @@ graph TD
 
 ## Writing guidance
 
-**Glossary** — tight, opinionated, one or two sentences. Define what the term IS, not what it does. When the field uses several words for the same thing, pick one and list the rest after `_Avoid_:`. Skip generic terms the user already knows.
+**Summary** — 4–5 lines, the first thing after the metadata. Plainly state what the video covers and the main takeaway, so it works as a quick reference without opening the full notes. No jargon the reader wouldn't already know; this is the "should I revisit this?" blurb.
+
+**Glossary** — use the bold-term format (not a table): `**Term**:` on its own line, the definition on the next line, then an optional `_Avoid_: alias1, alias2` line listing other words for the same thing. Tight and opinionated — one or two sentences defining what the term IS, not what it does. Prefer the glossary's own terms inside other definitions. Group under `### <subheading>` if natural clusters emerge. Skip generic terms the user already knows.
 
 **Key Notes** — bulleted, organized by topic. If `chapters.json` exists AND the video is longer than ~30 minutes, use one `### <Chapter Title>` subsection per chapter (preserves lecture structure for recall). Otherwise group by natural topic.
 

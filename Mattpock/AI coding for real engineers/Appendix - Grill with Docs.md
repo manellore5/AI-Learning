@@ -1,22 +1,42 @@
 # Appendix: Grill with Docs
 Source: https://www.aihero.dev/workshops/hitl-patterns~x8o98/appendix-grill-with-docs-lrk9q · Course: AI coding for real engineers · Added: 2026-06-11
 
-> Part of the **Human-in-the-Loop (HITL) Patterns** workshop by Matt Pocock (AI Hero). Extends the earlier *Grill Me* idea with persistent project docs — a shared glossary and architectural decision records — so a coding agent stops re-asking (and re-breaking) the same things.
+## Summary
+Part of Matt Pocock's **Human-in-the-Loop (HITL) Patterns** workshop (AI Hero). A coding agent draws on four sources — code, commit history, GitHub issues, and your messages — but two questions stay hard for it: *"why was it built this way?"* and *"what does this jargon mean?"* The fix is two kinds of committed docs: **ADRs** record the *why* behind hard decisions, and a **glossary** (`context.md`) pins down domain terms. The *Grill with Docs* skill bakes both into the grilling session, before the PRD. Watch this for how to give agents durable project context instead of re-explaining yourself every session.
 
 ## Glossary
 
-| Term | Definition |
-|------|------------|
-| Grill Me | A skill that runs an interrogation session: the agent relentlessly questions you about a plan or design until you reach shared understanding. Good for non-code thinking. |
-| Grill with Docs | A drop-in replacement for *Grill Me* that additionally maintains a glossary (`context.md`) and offers to write ADRs during the session. Matt's default for any codebase. |
-| ADR (Architectural Decision Record) | A small markdown file recording an important design decision: what was chosen, what alternatives were considered, and *why*. Lives in the repo so any agent can read it. |
-| Glossary / `context.md` | A repo-root markdown file defining your project's domain jargon, giving the agent tight definitions for terms it can't infer from code. |
-| Ubiquitous Language | The Domain-Driven Design idea of one shared vocabulary used by domain experts, developers, and the code itself. The glossary is how you make it real for the agent. |
-| Domain-Driven Design (DDD) | The body of practice these ideas borrow from; source of "ubiquitous language." |
-| PRD (Product Requirements Document) | The spec describing what you're going to build. Docs (glossary + ADRs) should exist *before* the PRD so requirements use current domain language. |
-| Materialization cascade | (Example jargon from Matt's course-video app) the chain reaction when a "ghost" lesson is turned real, which in turn promotes its ghost section into a real section. |
-| Ghost lesson / Ghost section | Planned-but-not-yet-real lessons/sections used while laying out a course; they become real via the materialization cascade. |
-| Grilling session | The interactive Q&A with the agent at the start of work, where the glossary is hammered out and decisions become ADRs. |
+**Grill Me**:
+A skill that runs an interrogation session: the agent relentlessly questions you about a plan or design until you reach shared understanding. Good for non-code thinking.
+
+**Grill with Docs**:
+A drop-in replacement for *Grill Me* that also maintains the glossary (`context.md`) and offers to write ADRs during the session. Matt's default for any codebase.
+
+**ADR (Architectural Decision Record)**:
+A small markdown file recording an important design decision: what was chosen, what alternatives were considered, and *why*. Lives in the repo so any agent can read it.
+_Avoid_: decision log, design doc
+
+**Glossary / `context.md`**:
+A repo-root markdown file defining your project's domain jargon, giving the agent tight definitions for terms it can't infer from code.
+
+**Ubiquitous Language**:
+The Domain-Driven Design idea of one shared vocabulary used by domain experts, developers, and the code itself. The glossary is how you make it real for the agent.
+_Avoid_: shared lingo, common terms
+
+**Domain-Driven Design (DDD)**:
+The body of practice these ideas borrow from; the source of "ubiquitous language."
+
+**PRD (Product Requirements Document)**:
+The spec describing what you're going to build. Docs (glossary + ADRs) should exist *before* the PRD so requirements use current domain language.
+
+**Materialization cascade**:
+(Example jargon from Matt's course-video app) the chain reaction when a "ghost" lesson is turned real, which in turn promotes its ghost section into a real section.
+
+**Ghost lesson / Ghost section**:
+Planned-but-not-yet-real lessons/sections used while laying out a course; they become real via the materialization cascade.
+
+**Grilling session**:
+The interactive Q&A with the agent at the start of work, where the glossary is hammered out and decisions become ADRs.
 
 ## Key Notes
 
