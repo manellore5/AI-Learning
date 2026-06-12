@@ -1,0 +1,548 @@
+Every time we write into software like
+ChatGPT, Claude code, Gemini, we get
+something which feels like it's
+thinking. You know, full sentences. And
+it makes a lot of sense a lot of times.
+But the thing is that these large
+language models actually do not
+understand anything in the way that we
+do. Under the hood, when it's writing a
+sentence, it's just a probabilistic
+thing. Like what token or what thing or
+what word comes next. So in this video,
+I want to walk you through exactly how a
+large language model works and why do I
+say that when they don't think like us,
+what do I mean by that? So let's try to
+understand how these models work
+exactly, right? So an LLM, a large
+language model, which is what this
+ChatGPT, Claude, everything is, it's
+nothing but a token generator. So what
+you do is you add a bunch of tokens and
+we'll get to what these tokens and what
+all this stuff is. So a bunch of tokens
+go inside this LLM and tokens next token
+comes out. Right, not even like bunch of
+tokens. I will just say like, you know,
+even at its simplest form, it's just a
+next token predictor. Like what is going
+on? For example, if I write the weather
+today is and then I leave for it, this
+machine over here is just a token
+predictor. It will predict what the next
+token, which happens to be a word as
+well, which I'll get to, what this word
+be. And that is all it's doing and now
+we have repurposed this whole thing
+thanks to the software and the, you
+know, the abstractions that we have
+built to create stuff like Claude code
+and Codex and, you know, these things
+which feel like magic. But what is this
+process? Like let's take a look at what
+exactly happens when all of this is
+going on, right? So see, when you
+actually write a sentence, let's say you
+are writing something like, you know,
+can you fix this bug? Let's say there is
+some context already in the LLM, right?
+And you write this message. The very
+first thing that happens when this is
+called on API.dot, you know, Claude.com
+or whatever, which is going through Opus
+4.6 or whatever, the very first thing
+that happens is something known as
+tokenizer. And this tokenizer is
+something that I have discussed in so
+much depth. It is like a 40-minute video
+on YouTube which shows me implementing a
+tokenizer from scratch inside
+TypeScript. So if you're a web
+developer, this would be very easy for
+you to understand this video and this
+video is probably one of the most
+high-effort videos that I've created.
+I'll link it somewhere so that if you
+want you can watch, but it is one of the
+worst performing videos, right? So,
+nobody really wants to learn how things
+work internally, but here I am again
+doing a similar video. Let's see how
+this turns out. Make sure you leave a
+like and comment if you want the
+algorithm to push this and for me to
+create such videos in future. But, this
+video is there on YouTube, right? I'll
+link it somewhere. You could see it on
+your screen as well. This is a 40-minute
+video on how tokenizer works. So, I'll
+not go into details of what this part is
+because I've already covered it, but the
+core idea here with tokenizer is that it
+takes a sentence like this one and will
+convert it into bunch of numbers, right?
+And these numbers could be big numbers,
+right? Depending on whatever your
+vocabulary is. Now, there are a few
+things again I'll have to get into a
+little bit of this tokenizer thing, but
+if you don't understand this, I highly
+recommend you watch that one video. It
+covers everything. These numbers are
+basically nothing but vocabulary, right?
+So, you know that, you know, in ASCII,
+for example, if you have seen ASCII, you
+know, like, you know, we have 1 to 128
+as numbers and then, you know, 96, for
+example, 97 stands for like A or B if
+I'm not wrong. I'm forgetting the
+sequence, but this is what number 96 is
+A, number 97 is B, and so on and so
+forth. This is what the sequence more or
+less looks like. Think of it in a
+similar way. Think of it in a similar
+way, but instead of these just being
+characters, these are complete I won't
+even say complete words, these are just
+tokens, right? So, for example, if you
+look at this sentence, it's possible
+that an LLM which is trained and which
+has like a tokenizer of, you know, let's
+say this word, v i d e and a space,
+right? So, let's say if this is a token,
+it could correspond to this number,
+right? Now, instead of just A being the
+number 96 like we discussed, instead of
+that, LLMs work with much broader range
+of vocabulary, right? So, they'll have
+this as one token. They might have A
+also as another token, right? For all we
+know, which is corresponding to some
+number, but they also have these tokens.
+So, this is what the first thing is that
+the sentence that we have is repeatedly
+broken down into a bunch of tokens and
+then this token, this array of token is
+passed to the large language model.
+Because you have to obviously remember
+that at the end of the day, this LLM and
+all of these are like computers, right?
+They are not human beings. They can only
+understand binary, zero and ones. So,
+you have to at some point convert them
+into numbers, and this is where the
+conversion happens. Now, the next step
+is interesting because once you have
+these tokens, what we do is we actually
+create vectors for them in the space,
+right? So, in order to understand this,
+we'll not get into a lot of math, but
+I'll give you like an idea of how this
+works. Let's call this vector
+embeddings. So, once we have these
+tokens, what we will do is we will map
+them into a vector space. Now, what this
+vector space is, it's basically think of
+it, you know, in in math class all of us
+have seen like X, Y, and Z axis, right?
+This is X, this is Y, and this is Z. And
+you know, like, you know, if if a vector
+is pointing, for example, somewhere,
+which is this could be A, B, and C if
+these are its coordinates, then you have
+that if you have this number, then you
+can create a vector from origin to this
+point, right? And let's say if I have
+another vector pointing somewhere here,
+which is like D, E, and F, you have
+these two vectors, and you can see like
+how far they are. You you can
+mathematically figure out, right? What
+is their distance, you know, over X
+axis, Y axis, Z axis, all of that. The
+idea with vector embeddings is sort of
+similar. What we do is that we take the
+sentence, and we take these tokens, and
+we create vector embeddings of the
+tokens. So, what it effectively means,
+if we just consider the words as dog as
+a token, for example, and a cat as
+token, right? and an animal as token.
+And let's say, let's give it another
+word. Let's say, you know, JavaScript,
+for example. So, what's going to happen
+is that when you start to plot these on
+this vector space, like dog would be
+somewhere on this, cat would be
+somewhere here, animal would be
+somewhere here, and JavaScript would be
+somewhere far away, right? The way this
+works is that vector space is created in
+such a way where identical things would
+be somewhat together, right? And even
+the operations on top of them. For
+example, if you add like a vector of dog
+plus cat, it'll still point somewhere
+closer to animal, right? Not closer to
+JavaScript. But if we add programming,
+for example, in the same area, this
+would be near JavaScript, right? So, it
+basically what it is doing, it's
+allowing us to create semantic meaning
+to what the tokens that we had over
+here. But this is still not enough
+because there is a lot of missing
+information over here in terms of
+predicting the next token, right?
+Because once you have pointed it out in
+the space, it also is important that
+what the sentence was saying. For
+example, let's say if I if I have this
+sentence, "I hate dogs. Which animal
+should I buy?" Let's say this is one
+sentence. And the second sentence is, "I
+don't hate dogs, right? Which animal
+should I buy?" You see these sentences
+are basically identical except for a
+single word, but these are opposite
+sentences because of just a single word,
+right? And if you're just doing you
+know, a vector embedding in the space
+and you're trying to predict just the
+next token based on this, it will not be
+very useful because you'll end up
+predicting the wrong thing. Because this
+don't keyword should have a lot of
+attention to it. It should have a lot of
+emphasis because this changes the whole
+sentence, right? So, this is where the
+next part of the equation comes into
+picture. Once you have done vector
+embeddings, what you do is you pass this
+into something we call as a transformer.
+Now, this is what the paper that you
+would have seen, "Attention is all you
+need," right? A very popular paper from
+Google in 2017, which is basically the
+core of this. So, what it does is that
+it enriches these vectors. Once you have
+created these vectors, it enriches them
+with meaning. So, this basically what we
+are seeing here, this transformer, is
+probably the most important part of a
+large language model, right? You cannot
+do anything meaningful if you take away
+transformer. This is the heart of the
+thing. Obviously, everything else is
+also required in the due process, but
+this is what does the heavy lifting and
+this is what is probably the most
+compute-intensive task in predicting or
+in doing that you have asked the LLM to.
+So, basically, I would not get into like
+core math and fundamentals of how this
+works because that is beyond the scope
+of the video also. But, what this does
+is basically it enriches the existing
+vectors that you have with meaning,
+right? So, this is the layer where this
+don't actually becomes super important
+and it's able to align the vectors in
+the space in such a way that it actually
+makes it possible for the computer to
+understand that the don't means that you
+don't hate dogs. You actually like them
+in the first place. Now, what the
+transformer does basically is that it
+will produce a vector for, like I
+mentioned, you know, these are two
+sentences and each of them would be
+broken down in a bunch of tokens, right?
+Which are then mapped over here in the
+vector embedding space and then we run
+the transformer and it'll, you know,
+enrich the vectors, right? So, what it
+does is that now the LLM that you see
+generally is this if you add the
+sentence that'll just start to spit out
+that, "Okay, if you don't like dogs,
+this is what you should do." But, this
+is not what is fed to an LLM. What is
+fed to an LLM is something like this.
+This is a conversation between two
+people, blah blah blah, which is the
+system prompt. Then your messages and
+the LLM messages are fed in order,
+right? So, it'll be like, "User says
+this." Then AI says this. And then user
+says this sentence, you know, whatever
+this is. And then AI says what? This is
+what LLM is given, right? So, LLM
+actually starts to answer from this
+point. But, in your UI, which is like a
+nice fancy UI that you see, you only see
+this sentence, right? So, don't be
+confused that, you know, you are
+actually talking to a computer or
+talking to an LLM. It has been made
+conversational in a way. It has been
+designed to be conversational. A raw
+base model. A base model is something
+that you just get out of just
+pre-training and post-training, which is
+just a raw model. Pre-training, which is
+just a raw model. That base model is
+nothing like this. It'll not be
+conversational, right? So, it has to be
+done additional work has to be done to
+make it conversational. But, this is
+what most LLM models look like under the
+hood. So, what this transformer does is
+that at this point, as the conversation
+is going, like let's say the
+conversation starts here, it will create
+a vector for each position, right? But,
+what we want is we want this vector only
+because the rest of the stuff we already
+have. We only want this one because this
+is where we have to figure out what is
+the next token, right? What is the next
+token supposed to be? So, what it does
+over here is that it does not just give
+you a single word that this is, "Hey,
+should be the word." Or, "Okay, I
+understand." Or, "You are absolutely
+right." Or whatever. What an LLM, what a
+transformer does is that it would give
+you a sequence of tokens. Like, it'll
+give you all the tokens in its
+vocabulary, right? Remember this thing
+we talked about right here with
+tokenizer and vocabulary? I think like
+you should watch this video if you have
+made it so far. Just watch it after this
+video if you want. But the concept of
+vocabulary inside a tokenizer exist
+because these numbers point to specific
+tokens, right? So what what an LLM would
+do is that it will create every single
+token every single time, right? It will
+have this 1122. It will have, you know,
+probably some more tokens over here. You
+know, it will have basically this whole
+list of all the tokens in its
+vocabulary. Not even missing out a
+single one. And every single token will
+have a probability assigned to it that
+which one is more likely to be the next
+token, right? Right? So it could be
+something like this on these lines,
+right? This one is 20 10% likely. This
+one is 25% likely and so on and so
+forth. Now, obviously, you don't want to
+pick something which is completely
+gibberish or random which has a low
+probability. That's why you will
+probably stick with something which is
+in the, you know, in the higher range of
+token probability. So you don't want
+something which is very least
+probabilistic because then the output
+would be gibberish. But you also don't
+want the most probabilistic number every
+single time because that would make your
+output too deterministic, right? So it
+will be just if for every time you talk
+to it, it will just output the same
+thing. Which is what, I don't know how
+many of you have seen, but which is what
+this temperature parameter is in APIs,
+right? If you're using an LLM over API,
+you will see that there is a parameter
+called as temperature. So if you lower
+the temperature, it basically makes it
+more guided towards using the tokens
+which have higher probability of being
+the next token. And the higher the
+temperature, the more variation it can
+create, right? So there are a bunch of
+more parameters you can customize to
+play along with this. But the idea is
+that once you are at this layer, you
+already have your next token. You just
+have to pick it. Now, as you're building
+these applications, you will try
+different temperatures. You will try
+different configurations. You will use
+various models to test which one works
+the best for your students, for your
+customers, for your consumers. And the
+reason you do that is because you
+realize that testing is one of the
+integral parts of software development.
+And this is where today's sponsor,
+TestSprite, also comes into picture.
+TestSprite is built for modern coders
+like yourself, which is an AI agent that
+builds, generates, runs, and presents
+you all the tests that you can possibly
+imagine in your codebase. They have an
+MCP server that you can use within your
+IDE of your choice, whether that's
+cursor or VS code or any other IDE, and
+they run all of your end-to-end tests in
+the cloud and present you with a nice
+dashboard showing you what exactly went
+wrong in your test suite. This allows
+you to not only code 10x faster with
+these new models, but also reliably ship
+to production 10x faster, which is the
+ultimate metric to aim for, right? Test
+right comes with a generous free tier
+alongside a starter plan, which is free
+for the first month. So, do check them
+out. The link is in the description and
+in the pinned comment. Thanks to Test
+Right for sponsoring this segment of the
+video, and now back to the video. So,
+now that we know the importance of
+testing, let's take a look at what
+happens next as you change these
+parameters, these temperatures and
+stuff, and what would be the next thing
+in question. So, now once you have
+figured out that, okay, let's say you
+want this 1122 as the token, right? This
+is your next token. Now, we take this
+token, we go back to the initial
+sequence, we obviously decode this
+token, right? So, we have the encoder
+over here in the tokenization
+tokenization, and we also have the
+decoder. We'll take a look at what this
+1122 is, and we'll add it over here. And
+this would say just a single word, okay.
+Let's say okay is what 1122 is. Now,
+what you're going to do is you're going
+to keep doing this. So, you have the
+same sequence again, right? This
+message. You will take this message and
+you would feed it back inside this whole
+thing again. You'll obviously not, you
+know, tokenize and stuff, but you will
+feed it back into transformer, it will
+enrich it, it will give you a sequence,
+and it will keep on doing this. So, then
+there would be probably a comma, which
+is what the LLM is trained to say, and
+then it'll start to say something like,
+you know, may be, for example, is the
+next token, you should consider getting
+a cat. You know, so this is obviously
+all of this is getting into chunks. So,
+first this chunk comes, then for
+example, this chunk comes, which is in
+the next iteration of the cycle, right?
+Then this chunk, then this chunk. That
+is why you would have seen like, you
+know, in the early raw days of ChatGPT
+when you used to you give a message, it
+would send down a token as it is
+streaming, right? And a lot of times it
+will be broken, right? It's not actually
+broken word, it's just just that the
+token itself is not something which is,
+you know, a complete word in the first
+place. Now, there are ways to optimize
+this because you would be seeing that,
+you know, if you're re-running this
+transformer thing again and again on top
+of itself, this is extremely wasteful,
+right? Because if you keep on running
+this whole thing, it will be very
+wasteful because you are doing a lot of
+repeated work, things that you have
+already done in a way, right? So, there
+are things like KV cache for, you know,
+you can literally cache the result of
+the work that transformer and your
+vector embedding space has done to a
+certain extent on the expense of using a
+lot of GP memory, right? So, there are
+trade-offs for speed versus memory, but
+this makes it possible for us to have
+all of like an experience where, you
+know, we get response very speedily from
+the LLM. And this whole thing is an
+active area of research also, right? So,
+this is something which Frontier Labs
+and open-source, you know, labs like
+Deep Seek and other Chinese labs are
+working continuously day and night.
+Like, how do we make optimizations
+around this architecture so that this
+can be faster, cheaper, better, more
+efficient to run. Last year when Deep
+Seek dropped an R1 paper, Deep Seek R1
+open-source paper, that included a lot
+of small, small, small optimizations
+that Deep Seek was able to do to not
+only get better output, but also reduce
+costs, which Frontier Labs were not
+doing at the time. So, again, this is
+where, you know, things sort of end.
+This is the present, like where we are
+right now. And of course, as the future
+evolves, I'll keep updating you guys on
+how things are working out. But this all
+in all is a journey of how an LLM works
+internally, right? So, it's all a
+probabilistic, a statistical thing where
+you are just predicting the next token.
+This transformer is something that you
+train when you are building, you know,
+an LLM from scratch. So, when Opus 4.6
+training is happening, what you're
+effectively training is this transformer
+piece, right? And you know, this vector
+embedding space as well, which figures
+out like how do you, you know, plot a
+specific token inside the vector space.
+So, these two things are sort of trained
+together in a way. Similarly, with
+tokenizer as well, you also have to
+train a tokenizer, like how do you split
+and how do you join the tokenized
+numbers together. So, how do you take it
+from here to here and here to here,
+right? So, these two are also sort of
+linked with an LLM of your choice. There
+is no universal tokenizer. It depends on
+the LLM that you're choosing, and they
+have their own tokenizers. So yeah,
+that's pretty much it for this video. I
+hope you enjoyed this and this is just
+touching the surface of things.
+Obviously, there's a lot of research and
+material and stuff that you can cover if
+you go inside these individual pieces.
+But do check out the spectrum embeddings
+and and this tokenizer video that I had
+created, which was a very in-depth thing
+and I am very sad to see that it did not
+get a lot of attention and love that,
+you know, people want, the technical
+folks want. And I agree, like it's just
+partly algorithm because you guys are
+not liking the video, commenting down
+even if I say so many times. So make
+sure you do that on this video and the
+video that is the tokenizer one. That's
+all for this one and I will see you in
+the next video very soon. If you're
+still watching, make sure you leave a
+comment I watched till the end below to
+tell me that you were still here and let
+me know what do you think about the
+video.
