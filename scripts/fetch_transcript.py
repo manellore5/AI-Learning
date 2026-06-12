@@ -24,16 +24,24 @@ def run(cmd: list[str], check: bool = True) -> subprocess.CompletedProcess:
 
 
 def get_metadata(url: str) -> dict:
-    proc = run(["yt-dlp", "--dump-single-json", "--skip-download", url])
+    proc = run(["yt-dlp", "--no-playlist", "--dump-single-json", "--skip-download", url])
     return json.loads(proc.stdout)
 
 
 def try_captions(url: str, workdir: Path) -> Path | None:
     """Try to fetch English captions. Returns path to transcript.txt or None."""
+    # Clear any stale subtitle files from a previous run so we don't pick them up.
+    for stale in workdir.glob("subs*"):
+        stale.unlink()
+
     out_pattern = str(workdir / "subs.%(ext)s")
-    proc = run(
+    # Intentionally ignore the return code: yt-dlp can exit non-zero when one
+    # requested language 404s while still writing a usable file for another.
+    # We judge success on whether we got non-empty text, not on the exit code.
+    run(
         [
             "yt-dlp",
+            "--no-playlist",
             "--write-auto-sub",
             "--write-sub",
             "--sub-lang", "en,en-US,en-GB",
@@ -45,10 +53,10 @@ def try_captions(url: str, workdir: Path) -> Path | None:
         ],
         check=False,
     )
-    if proc.returncode != 0:
-        return None
 
-    srt_files = list(workdir.glob("*.srt"))
+    # Language code gets inserted before the extension (e.g. subs.en.srt).
+    # Sort for deterministic selection when multiple language files exist.
+    srt_files = sorted(workdir.glob("subs*.srt"))
     if not srt_files:
         return None
 
@@ -72,7 +80,8 @@ def srt_to_text(srt: str) -> str:
         if "-->" in line:
             continue
         line = re.sub(r"<[^>]+>", "", line)
-        lines.append(line)
+        if line:
+            lines.append(line)
     deduped = []
     for line in lines:
         if not deduped or deduped[-1] != line:
@@ -86,6 +95,7 @@ def transcribe_audio(url: str, workdir: Path, whisper_model: str) -> Path:
     run(
         [
             "yt-dlp",
+            "--no-playlist",
             "-x",
             "--audio-format", "mp3",
             "-o", audio_template,
@@ -102,12 +112,29 @@ def transcribe_audio(url: str, workdir: Path, whisper_model: str) -> Path:
     print(f"[fetch_transcript] Loading whisper model '{whisper_model}' (first run downloads it)...", file=sys.stderr)
     model = WhisperModel(whisper_model, device="cpu", compute_type="int8")
     print(f"[fetch_transcript] Transcribing {audio_path.name}...", file=sys.stderr)
-    segments, _ = model.transcribe(str(audio_path), beam_size=1)
+    segments, info = model.transcribe(str(audio_path), beam_size=1)
 
+    total = getattr(info, "duration", 0) or 0
     transcript_path = workdir / "transcript.txt"
+    wrote_any = False
     with transcript_path.open("w", encoding="utf-8") as fh:
         for seg in segments:
-            fh.write(seg.text.strip() + "\n")
+            chunk = seg.text.strip()
+            if not chunk:
+                continue
+            fh.write(chunk + "\n")
+            wrote_any = True
+            if total:
+                pct = min(100, int(seg.end / total * 100))
+                print(f"\r[fetch_transcript] ...{pct}% ({seg.end:.0f}/{total:.0f}s)", end="", file=sys.stderr)
+    if total:
+        print("", file=sys.stderr)  # newline after the progress line
+
+    if not wrote_any:
+        raise RuntimeError(
+            "Transcription produced no text. The audio may contain no speech "
+            "(e.g. a music-only track), or the download may have failed."
+        )
     return transcript_path
 
 
@@ -143,16 +170,18 @@ def main() -> int:
 
     print("[fetch_transcript] Trying captions...", file=sys.stderr)
     transcript = try_captions(args.url, workdir)
+    captions_used = transcript is not None
     if transcript is None:
         print("[fetch_transcript] No captions found, transcribing audio...", file=sys.stderr)
         transcript = transcribe_audio(args.url, workdir, args.whisper_model)
 
+    chapters_path = workdir / "chapters.json"
     summary = {
         "title": title,
         "duration_seconds": duration,
         "transcript": str(transcript),
-        "chapters": str(workdir / "chapters.json") if (workdir / "chapters.json").exists() else None,
-        "captions_used": transcript.name == "transcript.txt" and (workdir / "audio.mp3").exists() is False,
+        "chapters": str(chapters_path) if chapters_path.exists() else None,
+        "captions_used": captions_used,
     }
     print(json.dumps(summary, indent=2))
     return 0
