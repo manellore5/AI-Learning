@@ -2,7 +2,7 @@
 
 My study-notes repo for AI/ML courses. Each lesson becomes a self-contained markdown note — **glossary**, **key notes**, and a **Mermaid understanding diagram** — organized in a folder per course and indexed automatically.
 
-Browse everything from [`INDEX.md`](INDEX.md).
+Browse everything from [`INDEX.md`](INDEX.md). For how a video becomes a note, see [How These Notes Are Made (Process)](How%20These%20Notes%20Are%20Made%20%28Process%29.md).
 
 ## Layout
 
