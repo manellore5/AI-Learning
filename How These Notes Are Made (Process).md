@@ -34,6 +34,11 @@ How you get the transcript depends on where the video lives.
 
 > The output is identical either way — only the *source* of the text differs (auto-fetched vs pasted).
 
+### Chapters (when present)
+- For YouTube videos, `yt-dlp` also extracts **chapter markers** into `chapters.json` (only written if the video actually has chapters). Note that YouTube **auto-generates chapters from any timestamp list in the description** (e.g. `00:00 Intro / 04:30 Setup / …`), so even some short clips carry them.
+- Chapters are **only *used* when the video is long (~30 min+)** — see [Key Notes](#key-notes). For shorter videos `chapters.json` may exist but is ignored, which is harmless.
+- Paywalled/pasted lessons have no chapter data; structure those notes by natural topic instead.
+
 ## Step 2 — Write the note from the text
 Compose the note from the extracted text — **distill, don't transcribe**. Aim for *adequate detail*: enough to understand the lesson, not a word-for-word rewrite.
 
