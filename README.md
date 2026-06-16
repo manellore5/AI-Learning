@@ -29,7 +29,13 @@ Open this repo in Claude Code and run the `/learn` skill:
 
 It fetches the transcript, composes the note (glossary + key notes + Mermaid), files it under `<Course>/`, rebuilds the indexes, and commits + pushes.
 
-**For paid/non-YouTube lessons** (e.g. aihero.dev, behind a login) `yt-dlp` can't fetch the transcript. Open the lesson's transcript tab, paste the text, and ask Claude to generate the note from it — the output is identical, just sourced from pasted text.
+**The `<url>` can also be a web article** (blog post, docs page). `/learn` fetches the page, extracts the main body text, and composes the same note from it — no transcript needed.
+
+```
+/learn https://martinfowler.com/articles/some-post.html --course "Architecture"
+```
+
+**For paid/login-gated pages** (e.g. aihero.dev) neither `yt-dlp` nor the page fetch can read the content. Open the lesson, paste the transcript/article text, and ask Claude to generate the note from it — the output is identical, just sourced from pasted text.
 
 ## One-time setup
 

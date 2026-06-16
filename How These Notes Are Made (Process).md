@@ -23,16 +23,20 @@ How you get the transcript depends on where the video lives.
 ### A. YouTube / yt-dlp-supported sites (automatic)
 - `yt-dlp` grabs the **captions** directly (fast path).
 - If the video has no captions, **`faster-whisper`** transcribes the audio locally on CPU (slower, ~10–15 min per hour of video).
-- This is fully automated by the `/learn` skill — it also pulls the **title** and **chapter markers** when present.
+- This is fully automated by the `/learn` skill — it also pu/le//lls the **title** and **chapter markers** when present.
 
-### B. Paywalled / non-YouTube pages (e.g. an aihero.dev lesson — paste)
-- A logged-in course player like **aihero.dev is not yt-dlp-supported**, so auto-fetch returns *"Unsupported URL"*.
+### B. Web articles / blog posts / docs pages (automatic)
+- For an ordinary web URL, the page is fetched directly with the **`WebFetch`** tool, which converts it to markdown and returns the **title + main body text** (nav, ads, and footer stripped). That extracted text becomes the source — the article's equivalent of a transcript.
+- **Fallback:** if the page is JS-rendered or `WebFetch` returns little usable text, the **Playwright browser** navigates to the page and reads the rendered content.
+
+### C. Paywalled / login-gated pages (e.g. an aihero.dev lesson — paste)
+- A logged-in course player like **aihero.dev is not yt-dlp-supported** (auto-fetch returns *"Unsupported URL"*) and `WebFetch` is blocked by the paywall.
 - Instead, **the source text is pasted in by hand** from the lesson page. Grab both, when available:
   1. **The lesson article / write-up** — clean structure, exact commands, links, code blocks.
   2. **The video transcript** — the spoken walkthrough (often with `mm:ss` timestamps), which adds nuance and the "why."
 - Having both gives the best note: the article supplies precise structure, the transcript supplies intent. The note is **reconciled from both**.
 
-> The output is identical either way — only the *source* of the text differs (auto-fetched vs pasted).
+> The output is identical in all cases — only the *source* of the text differs (auto-fetched transcript, auto-fetched article, or pasted).
 
 ### Chapters (when present)
 - For YouTube videos, `yt-dlp` also extracts **chapter markers** into `chapters.json` (only written if the video actually has chapters). Note that YouTube **auto-generates chapters from any timestamp list in the description** (e.g. `00:00 Intro / 04:30 Setup / …`), so even some short clips carry them.

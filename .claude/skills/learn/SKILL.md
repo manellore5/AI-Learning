@@ -1,28 +1,30 @@
 ---
 name: learn
-description: Generate study notes from a YouTube video — link, glossary, key notes, and a Mermaid understanding diagram — saved as a markdown file per video, organized by course, and committed to git. Use when the user wants to /learn a YouTube URL, take notes from a video, or process a course lecture into reviewable notes.
+description: Generate study notes from a YouTube video OR a web article/page — link, glossary, key notes, and a Mermaid understanding diagram — saved as a markdown file per source, organized by course, and committed to git. Use when the user wants to /learn a YouTube URL or any web URL, take notes from a video or article, or process a lecture/blog post/docs page into reviewable notes.
 ---
 
-# /learn — YouTube video → study notes
+# /learn — video or web article → study notes
 
 ## Quick start
 
 ```
-/learn <youtube-url> --course "<Course_Name>"
+/learn <url> --course "<Course_Name>"
 ```
 
-Example: `/learn https://youtube.com/watch?v=abc123 --course "Andrew_Ng_DeepLearning"`
+The `<url>` can be a **YouTube video** or **any web page** (article, blog post, docs):
+- `/learn https://youtube.com/watch?v=abc123 --course "Andrew_Ng_DeepLearning"`
+- `/learn https://martinfowler.com/articles/some-post.html --course "Architecture"`
 
 ## What it produces
 
-One self-contained markdown file per video at `<Course>/<Title>.md` with:
-1. YouTube URL (clickable, at the top)
+One self-contained markdown file per source at `<Course>/<Title>.md` with:
+1. Source URL (clickable, at the top)
 2. A 4–5 line **Summary** (quick "what's this about" reference)
 3. Glossary (bold-term format with `_Avoid_:` aliases)
 4. Key Notes (chapter-aware for long videos)
 5. Mermaid `graph TD` understanding diagram
 
-Plus the raw transcript saved to `<Course>/.transcripts/<Title>.txt` (hidden folder, so notes can be regenerated later without cluttering the index).
+Plus the raw source text saved to `<Course>/.transcripts/<Title>.txt` (hidden folder, so notes can be regenerated later without cluttering the index) — the video transcript for videos, or the extracted article text for web pages.
 
 `<Course>` is a top-level folder per learning. It may be nested (e.g. `Mattpock/AI coding for real engineers`) — pass the path you want in `--course`.
 
@@ -31,16 +33,24 @@ Plus the raw transcript saved to `<Course>/.transcripts/<Title>.txt` (hidden fol
 Follow these steps in order:
 
 1. **Parse args** — extract `<url>` and `--course "<Course>"` (the destination folder, may be nested). If course is missing, ask the user.
-2. **Fetch transcript** — create a temp workdir, then run:
+2. **Get the source text** — branch on what `<url>` is:
+
+   **(a) YouTube / yt-dlp-supported video** — create a temp workdir, then run:
    ```
    python scripts/fetch_transcript.py <url> --workdir <tmp>
    ```
-   Outputs `transcript.txt`, `title.txt`, and (sometimes) `chapters.json` in the workdir.
-   - If the URL is not a YouTube / yt-dlp-supported site (e.g. a paid course player like aihero.dev), this returns `Unsupported URL`. In that case, ask the user to paste the transcript text and skip to step 4.
-3. **Read** `transcript.txt`, `title.txt`, and `chapters.json` (if present) with the Read tool.
+   Outputs `transcript.txt`, `title.txt`, and (sometimes) `chapters.json` in the workdir. Read them with the Read tool.
+
+   **(b) Any other web page (article / blog / docs)** — fetch the page content directly:
+   - Use the **`WebFetch`** tool on `<url>` with a prompt like *"Return the article's title on the first line, then the full main body text verbatim — headings, paragraphs, code blocks, lists. Exclude nav, ads, cookie banners, comments, and footer."*
+   - Treat the returned title as `title.txt` and the body as the source text (the article's equivalent of a transcript). There are no chapters.
+   - **Fallbacks:** if `WebFetch` fails (404, cross-host redirect → retry with the new URL, or a JS-heavy/login-gated page returns little usable text), drive the **Playwright browser** (`browser_navigate` → `browser_snapshot` / read page text) to read the rendered content. If the page is genuinely gated and neither works, ask the user to paste the text and continue from step 4.
+
+   **(c) Paid course player (e.g. aihero.dev)** — `fetch_transcript.py` returns `Unsupported URL` and `WebFetch` is blocked by the paywall; ask the user to paste the transcript/article text, then continue from step 4.
+3. **Confirm the source text** is in hand (transcript or article body) plus a title (and `chapters.json` if a video).
 4. **Determine destination** — `<Course>/<Sanitized_Title>.md`. Sanitize the title: keep alphanumerics, spaces, hyphens; drop other punctuation. If a note with that name already exists in the course, stop and tell the user (don't duplicate).
-5. **Generate the note** using the template below. Compose it yourself from the transcript — do not call an external LLM.
-6. **Save files** — write `<Course>/<Title>.md`, and copy the transcript to `<Course>/.transcripts/<Title>.txt`.
+5. **Generate the note** using the template below. Compose it yourself from the source text — do not call an external LLM.
+6. **Save files** — write `<Course>/<Title>.md`, and copy the source text to `<Course>/.transcripts/<Title>.txt`.
 7. **Update indexes** — run `python scripts/update_index.py` (rebuilds the master `INDEX.md` and each `<Course>/INDEX.md`).
 8. **Git commit + push**:
    ```
@@ -92,6 +102,9 @@ graph TD
 
 - **No course flag** — ask the user before proceeding.
 - **URL already processed** — a note with that title already exists in the course; report and stop (don't duplicate).
-- **Captions unavailable** — `fetch_transcript.py` falls back to audio transcription automatically (slower, ~10–15 min per hour of video on CPU).
+- **Captions unavailable** (video) — `fetch_transcript.py` falls back to audio transcription automatically (slower, ~10–15 min per hour of video on CPU).
 - **Very long video (>3 hours)** — transcript may strain context; warn the user and offer to process by chapter range if needed.
+- **Web page returns little/no text** — likely JS-rendered or gated; fall back to the Playwright browser, then to asking the user to paste.
+- **Web page has no clear title** — derive a sensible title from the H1 or the page topic; confirm with the user if ambiguous.
+- **Paywalled / login-only page** — neither `WebFetch` nor the browser will get clean text; ask the user to paste it.
 - **No git remote** — push will fail silently; commit still succeeds. Mention this to the user once.
