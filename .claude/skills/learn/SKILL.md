@@ -44,7 +44,7 @@ Follow these steps in order:
    **(b) Any other web page (article / blog / docs)** — fetch the page content directly:
    - Use the **`WebFetch`** tool on `<url>` with a prompt like *"Return the article's title on the first line, then the full main body text verbatim — headings, paragraphs, code blocks, lists. Exclude nav, ads, cookie banners, comments, and footer."*
    - Treat the returned title as `title.txt` and the body as the source text (the article's equivalent of a transcript). There are no chapters.
-   - **Fallbacks:** if `WebFetch` fails (404, cross-host redirect → retry with the new URL, or a JS-heavy/login-gated page returns little usable text), drive the **Playwright browser** (`browser_navigate` → `browser_snapshot` / read page text) to read the rendered content. If the page is genuinely gated and neither works, ask the user to paste the text and continue from step 4.
+   - **Fallbacks:** if `WebFetch` fails (404, cross-host redirect → retry with the new URL, or a JS-heavy/login-gated page returns little usable text), retry via **Jina AI Reader** — `WebFetch` the URL `https://r.jina.ai/<url>` (it renders JS server-side and returns clean markdown). If that still returns little usable text, the page is genuinely gated; ask the user to paste the text and continue from step 4.
 
    **(c) Paid course player (e.g. aihero.dev)** — `fetch_transcript.py` returns `Unsupported URL` and `WebFetch` is blocked by the paywall; ask the user to paste the transcript/article text, then continue from step 4.
 3. **Confirm the source text** is in hand (transcript or article body) plus a title (and `chapters.json` if a video).
@@ -104,7 +104,7 @@ graph TD
 - **URL already processed** — a note with that title already exists in the course; report and stop (don't duplicate).
 - **Captions unavailable** (video) — `fetch_transcript.py` falls back to audio transcription automatically (slower, ~10–15 min per hour of video on CPU).
 - **Very long video (>3 hours)** — transcript may strain context; warn the user and offer to process by chapter range if needed.
-- **Web page returns little/no text** — likely JS-rendered or gated; fall back to the Playwright browser, then to asking the user to paste.
+- **Web page returns little/no text** — likely JS-rendered or gated; retry through Jina AI Reader (`https://r.jina.ai/<url>`), then fall back to asking the user to paste.
 - **Web page has no clear title** — derive a sensible title from the H1 or the page topic; confirm with the user if ambiguous.
-- **Paywalled / login-only page** — neither `WebFetch` nor the browser will get clean text; ask the user to paste it.
+- **Paywalled / login-only page** — neither `WebFetch` nor Jina AI Reader will get clean text; ask the user to paste it.
 - **No git remote** — push will fail silently; commit still succeeds. Mention this to the user once.

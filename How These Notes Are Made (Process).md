@@ -27,7 +27,7 @@ How you get the transcript depends on where the video lives.
 
 ### B. Web articles / blog posts / docs pages (automatic)
 - For an ordinary web URL, the page is fetched directly with the **`WebFetch`** tool, which converts it to markdown and returns the **title + main body text** (nav, ads, and footer stripped). That extracted text becomes the source — the article's equivalent of a transcript.
-- **Fallback:** if the page is JS-rendered or `WebFetch` returns little usable text, the **Playwright browser** navigates to the page and reads the rendered content.
+- **Fallback:** if the page is JS-rendered or `WebFetch` returns little usable text, retry through **Jina AI Reader** — prepend `https://r.jina.ai/` to the URL and `WebFetch` that instead. Jina renders the page (JS included) on its servers and returns clean, LLM-ready markdown, so no local browser is needed.
 
 ### C. Paywalled / login-gated pages (e.g. an aihero.dev lesson — paste)
 - A logged-in course player like **aihero.dev is not yt-dlp-supported** (auto-fetch returns *"Unsupported URL"*) and `WebFetch` is blocked by the paywall.
