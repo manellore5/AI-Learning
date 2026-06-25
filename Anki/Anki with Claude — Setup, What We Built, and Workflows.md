@@ -76,6 +76,28 @@ A card you keep failing (high lapse count). Anki flags leeches; they're candidat
   - e.g. `0 + 12 + 0` = no new cards left, 12 still in learning steps, 0 reviews due. All zero = deck done for the day.
 - **Gear ⚙️** per deck → Options (new-cards/day, learning steps, etc.), rename, custom study.
 
+### When does each card reappear? (button timings)
+The exact times shown above each button depend on the card's stage and your deck settings, but here are the **Anki defaults** (learning steps `1m 10m`, relearning step `10m`, starting ease 250%, graduating interval 1 day, easy interval 4 days). The time each button shows is *also printed right on the button* while you study — trust that number over any table.
+
+**New / learning card** (a brand-new card, still in learning steps):
+| Button | Color | What it means | Card comes back in |
+|--------|-------|----------------|--------------------|
+| **Again** | 🔴 red | forgot / wrong | **~1 min** (back to first learning step) |
+| **Hard** | ⬜ grey | got it, but a struggle | **~6 min** (repeats the step) |
+| **Good** | 🟩 green | recalled fine | **~10 min**, then **1 day** after the last step → graduates to review |
+| **Easy** | 🔵 blue | trivial | **4 days** — skips remaining steps, graduates immediately |
+
+**Review card** (already graduated; intervals grow multiplicatively, so they get longer each success):
+| Button | Color | What it means | Next interval |
+|--------|-------|----------------|---------------|
+| **Again** | 🔴 red | forgot (a *lapse*) | drops to **~10 min** relearning, interval reset; ease −20% |
+| **Hard** | ⬜ grey | struggled | **interval × 1.2** (e.g. 10 d → ~12 d); ease −15% |
+| **Good** | 🟩 green | recalled fine | **interval × ease** (~×2.5; e.g. 10 d → ~25 d) |
+| **Easy** | 🔵 blue | trivial | **interval × ease × 1.3** easy bonus (e.g. 10 d → ~32 d) |
+
+- **The pattern:** Again = minutes (and shrinks future intervals), Hard = a small step up, Good ≈ doubles, Easy ≈ doubles-plus-a-bonus. Each successful review pushes the card further into the future; each failure pulls it back to minutes.
+- These are the **starting** defaults — once a card has been reviewed a few times the displayed times reflect its own history (could be days, weeks, months, years). Tune them per deck under **⚙️ → Options**.
+
 ### What Claude can do once connected (capabilities)
 - **Create flashcards in any format we need** — Claude connects through the add-on and builds cards in whatever note type/layout fits (Basic, Cloze, custom interactive).
 - **Rich cards** — a card can hold a specific topic, description, **images/diagrams**, and **audio**.
