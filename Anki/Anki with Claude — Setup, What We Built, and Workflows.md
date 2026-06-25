@@ -2,7 +2,7 @@
 Source: https://foosoft.net/projects/anki-connect/ · Course: Anki · Added: 2026-06-25
 
 ## Summary
-A practical note on driving **Anki** (a spaced-repetition flashcard app) from **Claude** via the **AnkiConnect** add-on. It covers how to install Anki and wire it to Claude, what we actually built together (an interactive chess-openings deck and an AI-coding-dictionary deck), how to study cards day-to-day (the Again/Hard/Good/Easy engine and the New/Learning/Due counts), and a set of higher-leverage workflows for generating cards from documents/videos and using AI to diagnose and fix the cards you keep failing. Read this to remember *how the pipeline is wired* and *what Claude can do once connected*.
+A practical note on driving **Anki** (a spaced-repetition flashcard app) from **Claude** via the **AnkiConnect** add-on. It covers how to install Anki and wire it to Claude, what we actually built together (an AI-coding-dictionary deck), how to study cards day-to-day (the Again/Hard/Good/Easy engine and the New/Learning/Due counts), and a set of higher-leverage workflows for generating cards from documents/videos and using AI to diagnose and fix the cards you keep failing. Read this to remember *how the pipeline is wired* and *what Claude can do once connected*.
 
 ## Glossary
 
@@ -19,10 +19,10 @@ An Anki add-on that exposes an HTTP API on `http://localhost:8765`. This is the 
 A **note** is the raw content (fields like Front/Back). A note can generate **multiple cards** (e.g. a forward "recognition" card and a reverse "recall" card from the same note).
 
 **Note type (model)**:
-The template that defines a note's fields and how cards are rendered (HTML/CSS/JS). Built-ins: Basic, Basic (and reversed), Cloze, Image Occlusion. Custom note types can embed interactive widgets (we built one with a clickable chessboard).
+The template that defines a note's fields and how cards are rendered (HTML/CSS/JS). Built-ins: Basic, Basic (and reversed), Cloze, Image Occlusion. Custom note types can embed interactive widgets (self-contained JS) when a plain front/back isn't enough.
 
 **Deck**:
-A named collection of cards (e.g. `Chess Openings`, `AI Coding Dictionary`).
+A named collection of cards (e.g. `AI Coding Dictionary`).
 
 **Recognition vs. Recall**:
 Recognition card = "do I know this term when I see it?" (front = term). Recall card = "can I produce the term from its definition?" (front = definition). Recall sticks better.
@@ -49,13 +49,10 @@ A card you keep failing (high lapse count). Anki flags leeches; they're candidat
 
 ### What we built together
 - **Connection confirmed** — AnkiConnect reachable on `localhost:8765`, API version 6, profile `User 1`. Built-in note types present (Basic, Cloze, Image Occlusion, etc.).
-- **Interactive Chess Openings deck** — you asked for 10 opening moves (beginner → advanced) and how to respond, as interactive flashcards.
-  - Custom note type **`Chess Opening (Interactive)`** with an **embedded clickable chessboard** (click a piece → click a square to play your guess; **Reset**/**Flip** buttons; board auto-orients to side-to-move). Self-contained JS — no extra add-ons.
-  - Deck **`Chess Openings`** (10 cards): front = position after opponent's move + "how should X respond?"; back = best response, highlighted on the board.
-  - Cards live in Anki's DB, not as repo files — so we also generated a standalone preview to open in VS Code: **`D:\AI-Learning\Chess\chess-openings-flashcards.html`** (open via Simple Browser, Live Preview extension, or a normal browser).
 - **AI Coding Dictionary deck** — turning the repo's learning notes (~70 terms across 7 sections) into cards.
   - Card design reviewed: one concept per card, plain language, example, memory hook, source quote. Key decision: choose **recognition vs. recall** for the front (recall sticks better).
   - Built a Section 1 sample: deck **`AI Coding Dictionary`**, 15 notes → 23 cards (15 recognition + 8 reverse-recall).
+  - A card looks like (e.g. *Harness*): **Front** `Harness` → **Back** = plain-language definition, a concrete example, a memory hook, related terms, and a "don't confuse with" note. The reverse-recall card flips it: definition → produce the term.
 
 ### How to study cards day-to-day
 - **Study flow:** deck list → click a deck → **Study Now** → read the **front** → think → **Show Answer** (or **Spacebar**) → rate it.
@@ -125,7 +122,7 @@ graph TD
   Port --> Anki[Anki app]
 
   Sources[Docs · YouTube · Tests] -->|Claude generates| Cards[Cards: text · images · audio · interactive]
-  Cards --> Decks[Decks: Chess Openings · AI Coding Dictionary]
+  Cards --> Decks[Deck: AI Coding Dictionary]
   Decks --> Study[Study: Again/Hard/Good/Easy → spaced repetition]
   Study --> Counts[New 🔵 · Learning 🔴 · Due 🟢]
   Study -->|fail data| Diagnose[Claude diagnoses failures]
