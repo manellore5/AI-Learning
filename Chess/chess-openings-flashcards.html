@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chess Openings — Interactive Flashcards</title>
+<style>
+  body{font-family:arial,sans-serif;background:#1e1e1e;color:#ddd;margin:0;padding:24px;}
+  h1{text-align:center;font-size:22px;margin:0 0 4px;}
+  .sub{text-align:center;color:#888;font-size:13px;margin-bottom:24px;}
+  .grid{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;}
+  .chess-card{width:440px;background:#252526;border:1px solid #3a3a3a;border-radius:12px;padding:16px;text-align:center;}
+  .opening{font-size:19px;font-weight:bold;margin-bottom:4px;}
+  .level{font-size:11px;font-weight:normal;color:#fff;border-radius:8px;padding:2px 9px;margin-left:6px;vertical-align:middle;}
+  .level.Beginner{background:#3a8a3a;} .level.Intermediate{background:#c8870f;} .level.Advanced{background:#b23a3a;}
+  .question{margin:8px 0;color:#ccc;font-size:15px;}
+  table.bd{border-collapse:collapse;margin:6px auto;border:2px solid #555;}
+  table.bd td.sq{width:46px;height:46px;font-size:33px;line-height:46px;text-align:center;cursor:pointer;padding:0;}
+  td.lt{background:#f0d9b5;} td.dk{background:#b58863;}
+  td.lbl{font-size:11px;color:#999;width:16px;height:16px;cursor:default;text-align:center;}
+  td.selsq{outline:3px solid #2e7d32;outline-offset:-3px;}
+  td.hlfrom{box-shadow:inset 0 0 0 5px rgba(255,170,0,.9);}
+  td.hlto{box-shadow:inset 0 0 0 5px rgba(46,160,60,.95);}
+  .pc{user-select:none;}
+  .pc.wp{color:#fafafa;text-shadow:0 0 1px #000,0 0 2px #000,1px 1px 0 #444;}
+  .pc.bp{color:#101010;text-shadow:0 0 1px #fff,0 0 2px #fff;}
+  .controls{margin:8px 0;}
+  .controls button{margin:0 4px;padding:5px 13px;border-radius:6px;border:1px solid #888;background:#eee;color:#222;cursor:pointer;font-size:13px;}
+  .controls button.reveal{background:#3a6ea5;color:#fff;border-color:#3a6ea5;}
+  .hint{font-size:12px;color:#888;}
+  .answer-block{margin:10px auto 0;text-align:center;display:none;}
+  .answer-block.show{display:block;}
+  .answer-move{font-size:18px;margin:6px 0;color:#fff;}
+  .explanation{font-size:14px;color:#ccc;text-align:left;background:#2f2f30;border-radius:8px;padding:10px;}
+  hr{border:none;border-top:1px solid #444;margin:14px 0;}
+</style>
+</head>
+<body>
+<h1>♟ Chess Openings — Interactive Flashcards</h1>
+<div class="sub">Click a piece then a square to play your response · "Show answer" highlights the best move · Reset / Flip the board</div>
+<div class="grid" id="grid"></div>
+
+<script>
+var CARDS = [
+ ["King's Pawn Opening (1.e4)","Beginner","rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1","b","White plays 1.e4. How should Black respond classically?","1...e5","e7e5","Mirroring in the center with 1...e5 stakes an equal claim to the middle and opens lines for the bishop and queen. This leads to the Open Games. A great modern alternative is 1...c5 (the Sicilian)."],
+ ["Queen's Pawn Opening (1.d4)","Beginner","rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq d3 0 1","b","White plays 1.d4. What is a solid central reply for Black?","1...d5","d7d5","1...d5 contests the center immediately and is rock-solid. 1...Nf6 (Indian Defenses) is the flexible modern choice, inviting hypermodern setups."],
+ ["Italian Game (3.Bc4)","Beginner","r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 4 3","b","After 1.e4 e5 2.Nf3 Nc6 3.Bc4, how does Black develop?","3...Bc5","f8c5","3...Bc5 (the Giuoco Piano) develops the bishop to an active diagonal eyeing f2, mirroring White. 3...Nf6 (Two Knights) is the sharper, more aggressive try."],
+ ["Ruy Lopez / Spanish (3.Bb5)","Intermediate","r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 4 3","b","After 1.e4 e5 2.Nf3 Nc6 3.Bb5, what is the main move?","3...a6","a7a6","3...a6 (the Morphy Defense) questions the bishop at once. White must decide: retreat with 4.Ba4 keeping the pin, or trade with 4.Bxc6. This is the most-played answer at every level."],
+ ["Sicilian Defense (1...c5)","Intermediate","rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2","w","Black answers 1.e4 with 1...c5 (Sicilian). How should White continue?","2.Nf3","g1f3","2.Nf3 prepares 3.d4 (the Open Sicilian), the most ambitious setup, fighting for the center and the d4 square. White accepts an imbalanced, fighting game where the c5-pawn trades for the d-pawn."],
+ ["French Defense (1...e6)","Intermediate","rnbqkbnr/pppp1ppp/4p3/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2","w","Black replies 1.e4 e6 (French). What is White's principled move?","2.d4","d2d4","2.d4 builds the big pawn center. After 2...d5 White chooses 3.Nc3, 3.Nd2, or 3.e5 (Advance). Black's light-squared bishop becomes the 'problem piece' boxed in behind the e6-pawn."],
+ ["Caro-Kann Defense (1...c6)","Intermediate","rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2","w","Black plays 1.e4 c6 (Caro-Kann). How does White take the center?","2.d4","d2d4","2.d4 grabs the full center. Unlike the French, Black's bishop on c8 can develop freely to f5 or g4 after ...d5, giving the Caro-Kann a solid, sound structure prized for endgames."],
+ ["Queen's Gambit (2.c4)","Advanced","rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq c3 0 2","b","After 1.d4 d5 2.c4, how should Black meet the gambit?","2...e6","e7e6","2...e6 (Queen's Gambit Declined) supports d5 and prepares smooth development; it's classically solid. The 'gambit' is temporary — after 2...dxc4 White easily regains the pawn. 2...c6 (Slav) is the other main defense."],
+ ["English Opening (1.c4)","Advanced","rnbqkbnr/pppppppp/8/8/2P5/8/PP1PPPPP/RNBQKBNR b KQkq c3 0 1","b","White opens 1.c4 (English). What is a flexible reply?","1...Nf6","g8f6","1...Nf6 keeps maximum flexibility, developing while delaying central commitment — it can transpose to many Indian setups. 1...e5 (a Reversed Sicilian) and 1...c5 (Symmetrical) are the other principled choices."],
+ ["Nimzo-Indian Defense (3.Nc3)","Advanced","rnbqkb1r/pppp1ppp/4pn2/8/2PP4/2N5/PP2PPPP/R1BQKBNR b KQkq - 1 3","b","After 1.d4 Nf6 2.c4 e6 3.Nc3, what is Black's most respected move?","3...Bb4","f8b4","3...Bb4 (the Nimzo-Indian) pins the c3-knight and fights for the e4 square with pieces rather than pawns — a hypermodern idea. Black often trades the bishop for the knight to inflict doubled pawns, swapping the bishop pair for structure."]
+];
+
+var GLYPH = {K:'♚',Q:'♛',R:'♜',B:'♝',N:'♞',P:'♟'};
+var FILES = 'abcdefgh';
+
+function parseFEN(f){
+  var rows=f.split(' ')[0].split('/'), b=[];
+  for(var r=0;r<8;r++){ var row=[],s=rows[r];
+    for(var i=0;i<s.length;i++){ var c=s.charAt(i);
+      if(/\d/.test(c)){ for(var k=0;k<parseInt(c,10);k++) row.push(''); } else row.push(c); }
+    b.push(row); }
+  return b;
+}
+
+function makeBoard(boardEl, fen, toMove){
+  var flipped = toMove.charAt(0)==='b';
+  var board = parseFEN(fen), sel=null;
+  function sqName(r,c){ return FILES.charAt(c)+(8-r); }
+  function pieceHTML(p){ if(!p) return '';
+    var up=p.toUpperCase(); return '<span class="pc '+(p===up?'wp':'bp')+'">'+(GLYPH[up]||'')+'</span>'; }
+  function render(){
+    var html='<table class="bd"><tbody>';
+    for(var rr=0;rr<8;rr++){ var r=flipped?7-rr:rr; html+='<tr><td class="lbl">'+(8-r)+'</td>';
+      for(var cc=0;cc<8;cc++){ var c=flipped?7-cc:cc; var dark=((r+c)%2===1);
+        var cls='sq '+(dark?'dk':'lt'); if(sel&&sel.r===r&&sel.c===c) cls+=' selsq';
+        html+='<td class="'+cls+'" data-r="'+r+'" data-c="'+c+'">'+pieceHTML(board[r][c])+'</td>'; }
+      html+='</tr>'; }
+    html+='<tr><td class="lbl"></td>';
+    for(var k=0;k<8;k++){ var c2=flipped?7-k:k; html+='<td class="lbl">'+FILES.charAt(c2)+'</td>'; }
+    html+='</tr></tbody></table>';
+    boardEl.innerHTML=html;
+    var cells=boardEl.querySelectorAll('td.sq');
+    for(var i=0;i<cells.length;i++) cells[i].addEventListener('click',onClick);
+  }
+  function onClick(e){
+    var td=e.currentTarget, r=+td.getAttribute('data-r'), c=+td.getAttribute('data-c');
+    if(sel){ if(sel.r===r&&sel.c===c){ sel=null; render(); return; }
+      board[r][c]=board[sel.r][sel.c]; board[sel.r][sel.c]=''; sel=null; render(); }
+    else if(board[r][c]){ sel={r:r,c:c}; render(); }
+  }
+  render();
+  return {
+    highlight:function(ft){ var from=ft.substring(0,2), to=ft.substring(2,4);
+      var tds=boardEl.querySelectorAll('td.sq');
+      for(var i=0;i<tds.length;i++){ var nm=sqName(+tds[i].getAttribute('data-r'),+tds[i].getAttribute('data-c'));
+        if(nm===from) tds[i].classList.add('hlfrom'); if(nm===to) tds[i].classList.add('hlto'); } },
+    reset:function(){ board=parseFEN(fen); sel=null; render(); },
+    flip:function(){ flipped=!flipped; render(); }
+  };
+}
+
+var grid = document.getElementById('grid');
+CARDS.forEach(function(d, idx){
+  var op=d[0], lvl=d[1], fen=d[2], tm=d[3], q=d[4], resp=d[5], ft=d[6], expl=d[7];
+  var card=document.createElement('div'); card.className='chess-card';
+  card.innerHTML =
+    '<div class="opening">'+(idx+1)+'. '+op+' <span class="level '+lvl+'">'+lvl+'</span></div>'+
+    '<div class="question">'+q+'</div>'+
+    '<div class="board"></div>'+
+    '<div class="controls"><button class="reset">Reset</button><button class="flip">Flip</button>'+
+    '<button class="reveal">Show answer</button></div>'+
+    '<div class="hint">Click a piece, then a square, to play your response.</div>'+
+    '<div class="answer-block"><hr><div class="answer-move">Best response: <b>'+resp+'</b></div>'+
+    '<div class="explanation">'+expl+'</div></div>';
+  grid.appendChild(card);
+  var ctrl = makeBoard(card.querySelector('.board'), fen, tm);
+  card.querySelector('.reset').addEventListener('click', function(){ ctrl.reset(); });
+  card.querySelector('.flip').addEventListener('click', function(){ ctrl.flip(); });
+  card.querySelector('.reveal').addEventListener('click', function(){
+    var ab=card.querySelector('.answer-block');
+    ab.classList.add('show'); ctrl.reset(); ctrl.highlight(ft); this.disabled=true;
+  });
+});
+</script>
+</body>
+</html>
