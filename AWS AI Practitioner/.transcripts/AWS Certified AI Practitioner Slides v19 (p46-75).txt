@@ -1,0 +1,592 @@
+--- Slide 46: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Estimated Cost for this Course
+• Using the AWS AI Services is not free
+• Following along with me with incur 
+charges, but I guide you to limit them 
+and show you how to turn things that 
+could cost you money
+• Some AWS AI Services have free 
+trials (like Amazon Q) but remember 
+to turn things off too
+
+--- Slide 47: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Generative AI with Amazon 
+Bedrock
+
+--- Slide 48: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+What is Generative AI ? 
+• Generative AI (Gen-AI) is a subset of Deep Learning
+• Used to generate new data that is similar to the data it was trained on
+• Text
+• Image
+• Audio
+• Code
+• Video…
+Generative Model
+Training data
+Generate
+“cartoon dog”
+
+--- Slide 49: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+What is Generative AI ? 
+Unlabeled Data
+Foundation Model
+Broad range of general tasks
+Pretrain
+Text Generation
+Text Summarization
+Information Extraction
+Image Generation
+Chatbot
+Question Answering
+Adapt
+
+--- Slide 50: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Foundation Model
+• To generate data, we must rely on a Foundation Model
+• Foundation Models are trained on a wide variety of input data
+• The models may cost tens of millions of dollars to train
+• Example: GPT-4o is the foundation model behind ChatGPT
+• There is a wide selection of Foundation Models from companies: 
+• OpenAI
+• Meta (Facebook)
+• Amazon
+• Google
+• Anthropic
+• Some foundation models are open-source (free: Meta, Google BERT) 
+and others under a commercial license (OpenAI, Anthropic, etc…)
+Foundation
+Model
+Data
+Training
+Generate
+new content
+
+--- Slide 51: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Large Language Models (LLM)
+• Type of AI designed to generate coherent human-like text
+• One notable example: GPT-4 (ChatGPT / Open AI)
+• Trained on large corpus of text data
+• Usually very big models
+• Billions of parameters
+• Trained on books, articles, websites, other textual data
+• Can perform language-related tasks
+• Translation, Summarization
+• Question answering
+• Content creation
+
+--- Slide 52: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Generative Language Models
+• We usually interact with the LLM by 
+giving a prompt
+• Then, the model will leverage all the 
+existing content it has learned from to 
+generate new content
+• Non-deterministic: the generated text 
+may be different for every user that uses 
+the same prompt
+Gen-AI Model
+User
+*Prompt*
+What is AWS?
+Non-deterministic
+
+--- Slide 53: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Generative Language Models
+• The LLM generates a list of potential words alongside probabilities
+• An algorithm selects a word from that list
+Gen-AI Model
+Selected word
+Based on probability
+(randomly)
+After the rain, the streets were
+wet    
+0.40
+flooded 
+0.25
+slippery 
+0.15
+empty 
+0.10
+muddy 
+0.05
+clean 
+0.03
+blocked         0.02
+▽
+
+--- Slide 54: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Generative Language Models
+Gen-AI Model
+Selected word
+Based on probability
+(randomly)
+After the rain, the streets were flooded
+and    
+0.30
+with 
+0.20
+but 
+0.15
+from 
+0.12
+until 
+0.10
+because         0.08
+.                       0.05
+▽
+
+--- Slide 55: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Generative AI for images
+Generate images from text prompts
+*Prompt*
+Generate a blue sky with white clouds 
+and the word “Hello” written in the sky
+
+--- Slide 56: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Generative AI for images
+Generate images from images
+*Prompt*
+Transform this image in Japanese 
+anime style
+
+--- Slide 57: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Generative AI for images
+Generate text from images
+*Prompt*
+Describe how many apples 
+you see in the picture
+*Response*
+The picture shows one apple. 
+The other fruit is an orange.
+
+--- Slide 58: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Generative AI for Images from text 
+Diffusion Models (ex: Stable Diffusion)
+Training: Forward diffusion process
+Picture
+Noise
+Generating: Reverse diffusion process 
+“a cat with a computer”
+
+--- Slide 59: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Amazon Bedrock
+• Build Generative AI (Gen-AI) applications on AWS
+• Fully-managed service, no servers for you to manage
+• Keep control of your data used to train the model
+• Pay-per-use pricing model
+• Unified APIs
+• Leverage a wide array of foundation models
+• Out-of-the box features: RAG, LLM Agents…
+• Security, Privacy, Governance and Responsible AI 
+features
+
+--- Slide 60: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Amazon Bedrock – Foundation Models
+• Access to a wide range of Foundation Models (FM)
+• Amazon Bedrock makes a copy of the FM, available only to you, which 
+you can further fine-tune with your own data
+• None of your data is used to train the FM
+
+--- Slide 61: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Amazon Bedrock
+Amazon Bedrock
+Foundation Models (FMs)
+Interactive
+Playground
+User
+1. Select Model
+(Anthropic – Claude)
+2. What’s the most
+popular dish in Italy?
+3. Pizza & Pasta.
+Knowledge Bases
+(RAG)
+Data Sources
+fetch data
+More relevant and 
+accurate responses
+Fine-tuning
+Update the model 
+with your data 
+Amazon S3
+Unified API
+Same for all models
+Applications
+
+--- Slide 62: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Amazon Bedrock – Base Foundation Model
+• How to choose? 
+• Model types, performance requirements, capabilities, constraints, compliance
+• Level of customization, model size, inference options, licensing agreements, 
+context windows, latency
+• Multimodal models (varied types of input and outputs)
+• What’s Amazon Titan?
+• High-performing Foundation Models from AWS
+• Image, text, multimodal model choices via a fully-managed APIs
+• Can be customized with your own data
+• Smaller models are more cost-effective
+
+--- Slide 63: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Example
+Amazon Titan vs. Llama vs. Claude vs. Stable Diffusion
+Amazon Titan
+(Titan Text Express)
+Llama
+(Llama-2 70b-chat)
+Claude
+(Claude 2.1)
+Stable Diffusion
+(SDXL 1.0)
+Max. Tokens
+(=max context 
+window)
+8K Tokens
+4K Tokens
+200K Tokens
+77-Tokens/Prompt
+Features
+High-performance 
+text model, +100 
+languages
+Large-scale tasks, 
+dialogue, English
+High-capacity text 
+generation, multi-
+language
+Image generation
+Use cases
+Content creation, 
+classification, 
+education…
+Text generation, 
+customer service…
+Analysis, forecasting, 
+document 
+comparison…
+Image creation for 
+advertising, media…
+Pricing (1K Tokens)
+Input: $0.0008
+Output: $0.0016
+Input: $0.0019
+Output: $0.0025
+Input: $0.008
+Output: $0.024
+$0.04 – 0.08 / image
+
+--- Slide 64: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Amazon Bedrock – Fine-Tuning a Model
+• Adapt a copy of a foundation model with your 
+own data
+• Fine-tuning will change the weights of the base 
+foundation model
+• Training data must:
+• Adhere to a specific format
+• Be stored in Amazon S3 
+• Note: not all models can be fine-tuned
+OR
+Amazon S3
++
+=
+Fine-tuned Custom
+
+--- Slide 65: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Supervised Fine-Tuning
+• Improves the performance of a 
+Model on specific tasks
+• = further trained on a particular 
+field or area of knowledge 
+• Supervised Fine-Tuning uses 
+labeled examples that are input-
+output pairs
+ {
+    "prompt": "Who is Stéphane Maarek?",
+    "completion": "Stéphane Maarek is an 
+AWS instructor who dedicates his time to 
+make the best AWS courses so that his 
+students can pass all AWS certification 
+exams with flying color!"
+ }
+Labeled Data
+
+--- Slide 66: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Reinforcement Fine-Tuning
+• Improves your FM model using feedback-based 
+learning
+• You provide the input data (training data – prompts)
+• You define a Reward Function to evaluate responses 
+(output) and judge which responses are good
+• Objective tasks => use AWS Lambda (python code)
+• Subjective tasks => use another model to “judge” by 
+providing evaluation instructions
+• Model learns iteratively from reward functions output 
+scores and will try to achieve high scores over time
+Model
+Prompt
+Response A
+Response B
+Reward
+Function
+Responses
+Responses
+Score
+Response A
+9
+Response B
+3
+update model with
+prompts / outputs pairs
+with scores
+
+--- Slide 67: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Reinforcement Fine-Tuning: example
+• Example: technical customer support chatbot
+• Sample customer prompt: “My app is running very slowly.”
+• Judge model instructions: have empathy, and run diagnostics with the user
+Response 1
+“Restart the app”
+Comment: Helpful but superficial
+-
+Solves some cases
+-
+No diagnosis
+-
+No learning or trust built
+Score: 5.0
+Response 2
+“That sounds frustrating. I can help you figure this out.
+Before we troubleshoot, can you tell me when it 
+started and what you were doing at the time?”
+Comment: Empathetic, diagnostic, efficient
+-
+Acknowledges user frustration
+-
+Gathers signal before acting
+-
+Leads to faster, better resolution
+Score: 9.0
+Response 3
+“Please open a support ticket and 
+attach logs A, B, and C.”
+Not helpful, creates friction
+-
+Pushes work to the user
+-
+Breaks conversational flow
+-
+Poor experience for a simple issue
+Score: 2.0
+
+--- Slide 68: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Supervised Fine Tuning vs 
+Reinforcement Fine Tuning
+Input Prompt
+(provided)
+Output Prompt
+(provided)
+Supervised Fine Tuning
+Input Prompt
+(provided)
+Output (Score = 2.0)
+(generated)
+Reinforcement Fine Tuning
+Output (Score = 9.0)
+(generated)
+Output (Score = 5.0)
+(generated)
+
+--- Slide 69: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Distillation
+• Making models smaller and faster
+• Up to 75% less expensive than original models
+• Decrease in accuracy, but potentially acceptable
+• Larger (teacher) model transfers knowledge to 
+a smaller (student) model
+• You provide input data (ex: prompts)
+• Produces a lighter model with similar behavior 
+to the original
+• Focuses on efficiency, speed, and cost reduction
+Larger Model
+(Teacher)
+Smaller Model
+(Student)
+Knowledge
+distill
+transfer
+Data
+
+--- Slide 70: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Fine-Tuning: good to know
+• Re-training an FM requires a higher budget
+• Supervised Fine-Tuning is usually cheaper as computations are less 
+intense and less data is usually required
+• It also requires experienced ML engineers to perform the task
+• You must prepare the data, do the fine-tuning, evaluate the model
+• Running a fine-tuned model is also more expensive
+• Option 1: Run the custom model “on-demand” (price per token)
+• Option 2: Purchase provisioned throughput (billed per month)
+
+--- Slide 71: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Fine-Tuning – Use cases
+• A chatbot designed with a particular persona or tone, or geared 
+towards a specific purpose (e.g., assisting customers, crafting 
+advertisements) 
+• Training using more up-to-date information than what the language 
+model previously accessed 
+• Training with exclusive data (e.g., your historical emails or messages, 
+records from customer service interactions) 
+• Targeted use cases (categorization, assessing accuracy)
+
+--- Slide 72: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Amazon Bedrock – Evaluating a Model
+Automatic Evaluation
+• Evaluate a model for quality control
+• Built-in task types:
+• Text summarization
+• question and answer
+• text classification
+• open-ended text generation…
+• Bring your own prompt dataset or use built-in 
+curated prompt datasets
+• Scores are calculated automatically
+• Model scores are calculated using various 
+statistical methods (e.g. BERTScore, F1…)
+Benchmark
+Questions
+Model to
+Evaluate
+Benchmark
+Answers
+Generated
+Answers
+Judge Model
+Grading Score
+
+--- Slide 73: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Note on Benchmark Datasets
+• Curated collections of data designed specifically 
+at evaluating the performance of language 
+models 
+• Wide range of topics, complexities, linguistic 
+phenomena
+• Helpful to measure: accuracy, speed and 
+efficiency, scalability
+• Some benchmarks datasets allow you to very 
+quickly detect any kind of bias and potential 
+discrimination against a group of people
+• You can also create your own benchmark 
+dataset that is specific to your business
+Benchmark
+Dataset (for bias)
+Model to
+Evaluate
+Benchmark
+Answers
+Generated
+Answers
+Judge Model
+Detect Bias
+Bias Score
+
+--- Slide 74: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Amazon Bedrock – Evaluating a Model
+Human Evaluation
+• Choose a work team to evaluate
+• Employees of your company
+• Subject-Matter Experts (SMEs)
+• Define metrics and how to evaluate
+• Thumbs up/down, ranking… 
+• Choose from Built-in task types (same as 
+Automatic) or add a custom task
+Model to
+Evaluate
+Generated
+Answers
+Employees
+(Work Team)
+Grading Score
+Answer 1
+Answer 2
+Answer 3
+Benchmark
+Questions
+Benchmark
+Answers
+
+--- Slide 75: © Stephane Maarek ---
+© Stephane Maarek
+NOT FOR DISTRIBUTION © Stephane Maarek www.datacumulus.com 
+Automated Metrics to Evaluate an FM
+• ROUGE: Recall-Oriented Understudy for Gisting Evaluation 
+• Evaluating automatic summarization and machine translation systems 
+• ROUGE-N – measure the number of matching n-grams between reference and generated text
+• ROUGE-L – longest common subsequence between reference and generated text
+• BLEU: Bilingual Evaluation Understudy
+• Evaluate the quality of generated text, especially for translations
+• Considers both precision and penalizes too much brevity
+• Looks at a combination of n-grams (1, 2, 3, 4)
+• BERTScore
+• Semantic similarity between generated text 
+• Uses pre-trained BERT models (Bidirectional Encoder Representations from Transformers) to compare the 
+contextualized embeddings of both texts and computes the cosine similarity between them. 
+• Capable of capturing more nuance between the texts
+• Perplexity: how well the model predicts the next token (lower is better)
