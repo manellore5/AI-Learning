@@ -1,10 +1,10 @@
 # AWS Certified AI Practitioner — Glossary
 Course: AWS AI Practitioner · Added: 2026-06-30 · src-id: aws-aif-glossary
 
-> 409 unique terms (deduped from all 154 topic cards, slides 47–355) across 16 sub-decks under `AWS Certified AI Practitioner::Glossary`. One atomic Term → Definition card each.
+> 409 unique terms (deduped from all 154 topic cards, slides 47–355) across 8 sub-decks under `AWS Certified AI Practitioner::Glossary` — one per section. One atomic Term → Definition card each.
 
 
-## Amazon Bedrock (1)  (26)
+## Amazon Bedrock  (77)
 
 - **Action Group** — set of pre-defined actions (often Lambda + OpenAPI schema) an agent can invoke. _(Amazon Bedrock › Amazon Bedrock Agents)_
 - **Agent** — orchestrates multi-step tasks using an FM’s reasoning. _(AI & Machine Learning › Reinforcement Learning (RL); Amazon Bedrock › Amazon Bedrock Agents)_
@@ -32,9 +32,6 @@ Course: AWS AI Practitioner · Added: 2026-06-30 · src-id: aws-aif-glossary
 - **Domain Adaptation Fine-tuning** — train on a domain dataset (most intensive). _(Amazon Bedrock › Model Improvement Techniques (Cost Order))_
 - **Embedding** — numerical vector representation of an input. _(Amazon Bedrock › Embeddings)_
 - **Fine-tune** — adapt the private copy with your own data. _(Amazon Bedrock › Bedrock Foundation Models — private copy & fine-tune)_
-
-## Amazon Bedrock (2)  (26)
-
 - **Fine-tuning** — adapt an FM by updating its weights on your data. _(Amazon Bedrock › Fine-Tuning a Model)_
 - **Forward diffusion** — training step that adds noise to images. _(Amazon Bedrock › Diffusion Models)_
 - **Foundation Model (FM)** — model pretrained on broad unlabeled data, adaptable to many tasks. _(Amazon Bedrock › Foundation Models; Amazon Bedrock › What is Generative AI)_
@@ -61,9 +58,6 @@ Course: AWS AI Practitioner · Added: 2026-06-30 · src-id: aws-aif-glossary
 - **Parameters** — the learned weights; LLMs have billions. _(Amazon Bedrock › Large Language Models (LLMs))_
 - **Pay-per-use** — billed by usage, no upfront servers. _(Amazon Bedrock › Amazon Bedrock — overview)_
 - **PII** — Personally Identifiable Information, which guardrails can remove. _(AWS Security Services › AWS Macie; Amazon Bedrock › Amazon Bedrock Guardrails)_
-
-## Amazon Bedrock (3)  (25)
-
 - **Playground** — interactive UI to test models. _(Amazon Bedrock › Bedrock components — Playground & Knowledge Bases (RAG))_
 - **Pretrain → Adapt** — train once on broad data, then specialize to a task. _(Amazon Bedrock › What is Generative AI)_
 - **Private FM copy** — your isolated instance of a foundation model in Bedrock. _(Amazon Bedrock › Bedrock Foundation Models — private copy & fine-tune)_
@@ -133,7 +127,7 @@ Course: AWS AI Practitioner · Added: 2026-06-30 · src-id: aws-aif-glossary
 - **Routine actions** — tasks Q can perform (submit time-off, send meeting invites). _(Amazon Q › Amazon Q Business)_
 - **Software agent** — implements features, generates docs, bootstraps projects. _(Amazon Q › Amazon Q Developer)_
 
-## AI & Machine Learning (1)  (31)
+## AI & Machine Learning  (93)
 
 - **1−Specificity** — false positive rate. _(AI & Machine Learning › AUC-ROC)_
 - **Accuracy** — = (TP + TN) / (TP + TN + FP + FN). _(AI & Machine Learning › Confusion Matrix)_
@@ -166,9 +160,6 @@ Course: AWS AI Practitioner · Added: 2026-06-30 · src-id: aws-aif-glossary
 - **Environment** — the system it interacts with. _(AI & Machine Learning › Reinforcement Learning (RL))_
 - **Epoch** — one full pass over the training data. _(AI & Machine Learning › Hyperparameter Tuning)_
 - **Expert System** — rule-based AI (e.g. MYCIN); AI but not ML. _(AI & Machine Learning › Machine Learning (ML))_
-
-## AI & Machine Learning (2)  (31)
-
 - **F1** — = 2·Precision·Recall / (Precision + Recall). _(AI & Machine Learning › Confusion Matrix)_
 - **Feature Extraction** — derive useful info (e.g. age from birth date). _(AI & Machine Learning › Feature Engineering)_
 - **Feature Selection** — keep the relevant subset of features. _(AI & Machine Learning › Feature Engineering)_
@@ -200,9 +191,6 @@ Course: AWS AI Practitioner · Added: 2026-06-30 · src-id: aws-aif-glossary
 - **Policy** — JSON of Effect/Action/Resource (+ optional Principal/Condition). _(AI & Machine Learning › Reinforcement Learning (RL); AWS Security Services › AWS IAM (Identity and Access Management))_
 - **Precision** — correct positives vs all predicted positives. _(AI & Machine Learning › Confusion Matrix; Responsible AI & Governance › Monitoring AI Systems)_
 - **Pretext task** — a self-generated training task (e.g. predict masked tokens). _(AI & Machine Learning › Self-Supervised Learning)_
-
-## AI & Machine Learning (3)  (31)
-
 - **Pseudo-labeling** — the model assigns labels to unlabeled data for re-training. _(AI & Machine Learning › Semi-supervised Learning)_
 - **Real-Time inference** — fast, per-request (e.g. chatbots). _(AI & Machine Learning › ML Inferencing (Real-Time vs Batch))_
 - **Recall** — correct positives vs all actual positives. _(AI & Machine Learning › Confusion Matrix; Responsible AI & Governance › Monitoring AI Systems)_
@@ -235,7 +223,7 @@ Course: AWS AI Practitioner · Added: 2026-06-30 · src-id: aws-aif-glossary
 - **Variance** — sensitivity to the training set; high variance = overfitting. _(AI & Machine Learning › Bias and Variance)_
 - **WaveNet** — generates raw audio waveforms (speech synthesis). _(AI & Machine Learning › ML Terms for the Exam (model types))_
 
-## AWS Managed AI Services (1)  (23)
+## AWS Managed AI Services  (45)
 
 - **A2I** — Augmented AI: human-in-the-loop review of ML predictions. _(AWS Managed AI Services › Amazon Augmented AI (A2I))_
 - **Amazon Comprehend** — managed NLP for insights in text. _(AWS Managed AI Services › Amazon Comprehend)_
@@ -260,9 +248,6 @@ Course: AWS AI Practitioner · Added: 2026-06-30 · src-id: aws-aif-glossary
 - **Forms & tables extraction** — structured key-value and tabular output. _(AWS Managed AI Services › Amazon Textract)_
 - **Fulfillment** — the Lambda action that completes the intent. _(AWS Managed AI Services › Amazon Lex)_
 - **HealthScribe** — generates clinical notes from conversations. _(AWS Managed AI Services › AWS HealthScribe)_
-
-## AWS Managed AI Services (2)  (22)
-
 - **HIPAA** — US health-data privacy regulation. _(AWS Managed AI Services › Amazon Transcribe Medical; Responsible AI & Governance › AWS Compliance)_
 - **Incremental Learning** — improves results from user feedback. _(AWS Managed AI Services › Amazon Kendra)_
 - **Intent** — what the user wants to do. _(AWS Managed AI Services › Amazon Lex)_
@@ -286,7 +271,7 @@ Course: AWS AI Practitioner · Added: 2026-06-30 · src-id: aws-aif-glossary
 - **SSML** — Speech Synthesis Markup Language for pronunciation control. _(AWS Managed AI Services › Amazon Polly)_
 - **Transcribe Medical** — HIPAA-compliant medical speech-to-text. _(AWS Managed AI Services › Amazon Transcribe Medical)_
 
-## Amazon SageMaker (1)  (22)
+## Amazon SageMaker  (44)
 
 - **AMT** — Automatic Model Tuning. _(Amazon SageMaker › SageMaker Automatic Model Tuning (AMT))_
 - **Approval status** — gate controlling which version deploys. _(Amazon SageMaker › SageMaker Model Registry)_
@@ -310,9 +295,6 @@ Course: AWS AI Practitioner · Added: 2026-06-30 · src-id: aws-aif-glossary
 - **Ground Truth Plus** — managed labeling offering. _(Amazon SageMaker › SageMaker Ground Truth)_
 - **JumpStart** — model hub + pre-built ML solution templates. _(Amazon SageMaker › SageMaker JumpStart)_
 - **K-means** — clustering to find groupings in data. _(Amazon SageMaker › SageMaker Built-in Algorithms)_
-
-## Amazon SageMaker (2)  (22)
-
 - **KNN** — K-Nearest Neighbors for classification. _(Amazon SageMaker › SageMaker Built-in Algorithms)_
 - **Measurement bias** — flawed/skewed measurement tools. _(Amazon SageMaker › Types of Bias (in ML data))_
 - **MLFlow** — open-source ML lifecycle management tool. _(Amazon SageMaker › MLFlow on Amazon SageMaker)_
@@ -336,7 +318,7 @@ Course: AWS AI Practitioner · Added: 2026-06-30 · src-id: aws-aif-glossary
 - **Step** — a single task in the pipeline. _(Amazon SageMaker › SageMaker Pipelines)_
 - **Tracking Server** — records runs/experiments. _(Amazon SageMaker › MLFlow on Amazon SageMaker)_
 
-## Responsible AI & Governance (1)  (33)
+## Responsible AI & Governance  (66)
 
 - **AI Governance Board** — cross-functional oversight committee. _(Responsible AI & Governance › AI Governance Frameworks & Strategies)_
 - **AI Service Card** — AWS responsible-AI documentation for an AI service. _(Responsible AI & Governance › AWS AI Service Cards)_
@@ -371,9 +353,6 @@ Course: AWS AI Practitioner · Added: 2026-06-30 · src-id: aws-aif-glossary
 - **HCD** — Human-Centered Design. _(Responsible AI & Governance › Human-Centered Design (HCD) for Explainable AI)_
 - **Hijacking / Prompt Injection** — embedded prompt instructions override behavior. _(Responsible AI & Governance › Prompt Misuses (Poisoning, Hijacking, Exposure, Leaking, Jailbreaking))_
 - **Infrastructure Protection** — access control, segmentation, encryption. _(Responsible AI & Governance › Security & Privacy for AI Systems)_
-
-## Responsible AI & Governance (2)  (33)
-
 - **Interpretability** — understand the internal cause of a decision. _(Responsible AI & Governance › Interpretability vs Explainability Trade-offs)_
 - **Jailbreaking** — bypass safety constraints. _(Responsible AI & Governance › Prompt Misuses (Poisoning, Hijacking, Exposure, Leaking, Jailbreaking))_
 - **Least privilege** — grant only the access needed. _(AWS Security Services › AWS IAM (Identity and Access Management); Responsible AI & Governance › Secure Data Engineering — Best Practices)_
@@ -408,7 +387,7 @@ Course: AWS AI Practitioner · Added: 2026-06-30 · src-id: aws-aif-glossary
 - **Version control** — track and roll back data/code/models. _(Responsible AI & Governance › MLOps)_
 - **Vulnerability Management** — find/patch software and model weaknesses. _(Responsible AI & Governance › Security & Privacy for AI Systems)_
 
-## AWS Security Services (1)  (24)
+## AWS Security Services  (47)
 
 - **Artifact Agreements** — review/accept AWS agreements (e.g. BAA/HIPAA). _(AWS Security Services › AWS Artifact)_
 - **Artifact Reports** — downloadable security/compliance reports (ISO, PCI, SOC). _(AWS Security Services › AWS Artifact)_
@@ -434,9 +413,6 @@ Course: AWS AI Practitioner · Added: 2026-06-30 · src-id: aws-aif-glossary
 - **Internet Gateway** — connects public subnets to the internet. _(AWS Security Services › VPC, Subnets, Internet & NAT Gateways)_
 - **ISV** — Independent Software Vendor. _(AWS Security Services › AWS Artifact)_
 - **KMS Key** — managed encryption key (needs decrypt permission for Bedrock). _(AWS Security Services › Bedrock Accessing an Encrypted S3 Bucket)_
-
-## AWS Security Services (2)  (23)
-
 - **Lambda** — serverless FaaS, auto-scaling, event-driven. _(AWS Security Services › AWS Lambda)_
 - **Languages** — Node.js, Python, Java, C#, Ruby, custom runtimes. _(AWS Security Services › AWS Lambda)_
 - **Macie** — ML-based sensitive-data (PII) discovery for S3. _(AWS Security Services › AWS Macie)_
