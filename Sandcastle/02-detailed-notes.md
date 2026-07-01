@@ -1,9 +1,10 @@
-# Sandcastle — Deep Reference
+# Sandcastle — Detailed Notes
 
-The complete picture. If you just want to get running, start with the **[Quickstart](01-quickstart.md)**. New to containers, worktrees, or agents? Skim **[Appendix A — Primers](#appendix-a--primers)** first.
+The complete picture: install, concepts, diagrams, implementation details, end-to-end examples, and every option. For a fast skim or refresher, see the **[Overview & Quick Revision](01-overview.md)**. New to containers, worktrees, or agents? Skim **[Appendix A — Primers](#appendix-a--primers)** first.
 
 **Contents**
 - [Why Sandcastle exists](#why-sandcastle-exists)
+- [Getting started (install & first run)](#getting-started-install--first-run)
 - [Core concepts — the vocabulary](#core-concepts--the-vocabulary)
 - [How it works end-to-end](#how-it-works-end-to-end)
 - [The three slots in depth](#the-three-slots-in-depth)
@@ -29,6 +30,82 @@ Running an AI coding agent **directly** on your repo has three problems:
 3. **No structure.** There's no clean way to say "implement, then verify, then review, then merge" as a repeatable pipeline — locally *and* in CI, with the same code.
 
 Sandcastle solves all three by putting the agent in a **sandbox** and choreographing the lifecycle around it: code in, agent runs, commits out, merge home. You get **isolation** (safe), **many boxes at once** (parallel), and a **programmable pipeline** (`run()` / `createSandbox()` / hooks). It is deliberately **unopinionated** about your workflow — you bring the prompts and the orchestration; Sandcastle handles sandboxing, branching, iteration, and merging.
+
+---
+
+## Getting started (install & first run)
+
+### Prerequisites
+
+- **Node.js** (with `npm`/`npx`) and **Git**.
+- **A sandbox runtime.** Local dev: **[Docker Desktop](https://www.docker.com/)** (recommended). Alternatives: Podman (rootless), Vercel (cloud microVMs — no local Docker).
+- **A Claude login** — your **Claude Pro/Max subscription** (recommended) or an Anthropic API key.
+- Run inside a **git repository**.
+
+```bash
+node -v && git --version && docker info | head -1
+```
+
+### 1. Install
+
+```bash
+npm install --save-dev @ai-hero/sandcastle
+```
+
+### 2. Scaffold the config
+
+```bash
+npx @ai-hero/sandcastle init
+```
+
+Creates a **`.sandcastle/`** directory: `Dockerfile` (sandbox image), `prompt.md` + `implement`/`plan`/`review`/`merge` templates, `main.ts` (entry calling `run()`), and `.env.example`.
+
+### 3. Authenticate — use your Claude subscription ⭐
+
+```bash
+cp .sandcastle/.env.example .sandcastle/.env
+claude setup-token   # on your host; prints a CLAUDE_CODE_OAUTH_TOKEN
+```
+
+```dotenv
+# .sandcastle/.env
+CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat-...   # uses your Claude subscription (recommended)
+# ANTHROPIC_API_KEY=sk-ant-...           # OR pay-per-token API billing
+GH_TOKEN=ghp_...                          # so the agent can use gh / push
+```
+
+The agent inside the sandbox now uses **your Claude subscription** — no per-token billing. **Team note:** each engineer uses their own token; `.sandcastle/.env` is git-ignored (never commit it). In **CI**, a subscription token usually isn't available, so pipelines use `ANTHROPIC_API_KEY` from a secret store (see [Recipe 4](#recipe-4--ci--automation)).
+
+### 4. First run
+
+Put a small, safe task in `.sandcastle/prompt.md`, then run the scaffolded entry script:
+
+```typescript
+// .sandcastle/main.ts
+import { run, claudeCode } from "@ai-hero/sandcastle";
+import { docker } from "@ai-hero/sandcastle/sandboxes/docker";
+
+await run({
+  agent: claudeCode("claude-opus-4-8"),
+  sandbox: docker(),
+  promptFile: ".sandcastle/prompt.md",
+});
+```
+
+```bash
+npx tsx .sandcastle/main.ts
+```
+
+Sandcastle builds the sandbox image → starts an isolated container → the agent works on your prompt → its commit is brought back. With Docker's default **`head`** strategy the change lands **directly on your current branch**.
+
+### 5. Verify
+
+```bash
+git log --oneline -3   # the agent's commit
+git status
+```
+
+To keep the agent off your working tree, send commits to a branch instead: `branchStrategy: { type: "branch", branch: "agent/my-task" }` — then review it like any PR. See [branch strategies](#3-the-branchstrategy-slot--how-changes-come-home).
 
 ---
 
@@ -419,7 +496,7 @@ flowchart LR
 
 ### Recipe 2 — Implement → review pipeline
 
-One warm sandbox, a test gate between steps (see also the [Quickstart](01-quickstart.md#7-the-one-recipe-worth-learning-early-implement--verify--review)):
+One warm sandbox, a test gate between steps (condensed version in the [Overview](01-overview.md#a-tiny-end-to-end-example-implement--verify--review)):
 
 ```typescript
 await using sandbox = await createSandbox({
@@ -585,6 +662,6 @@ See the concise table under [Core concepts](#core-concepts--the-vocabulary). Add
 
 - Repo: <https://github.com/mattpocock/sandcastle>
 - Package: `@ai-hero/sandcastle` (npm)
-- Quickstart: [01-quickstart.md](01-quickstart.md) · Index: [README.md](README.md)
+- Overview: [01-overview.md](01-overview.md) · Index: [README.md](README.md)
 
 _Written against the repo README, `docs/` site, `CONTEXT.md`, and `src/`. Verify version-specific details against the package version you install._

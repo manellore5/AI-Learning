@@ -74,10 +74,10 @@ Once the team internalizes **agent (who) · sandbox (where) · branchStrategy (h
 
 | Doc | Read it when… |
 |---|---|
-| **[01 — Quickstart](01-quickstart.md)** | You want to install Sandcastle and get a first agent run working in ~15 minutes. |
-| **[02 — Reference](02-reference.md)** | You want the full picture: every concept, all three slots in depth, the execution model, advanced patterns, enterprise concerns, the complete options tables, ready-to-copy recipes, primers, and a glossary. |
+| **[01 — Overview & Quick Revision](01-overview.md)** | You want to grok (or re-grok) Sandcastle fast: a one-page skim with the mental model, a whole-repo map, the 3-slot cheat-sheet, a tiny example, and a "things to remember" checklist. |
+| **[02 — Detailed Notes](02-detailed-notes.md)** | You want everything: install & first run, every concept, all three slots in depth, diagrams, the execution model, advanced patterns, enterprise concerns, the complete options tables, end-to-end recipes, primers, and a glossary. |
 
-> **New to containers, git worktrees, or AI coding agents?** The reference has short **[primers](02-reference.md#appendix-a--primers)** — skim those first.
+> **New to containers, git worktrees, or AI coding agents?** The detailed notes have short **[primers](02-detailed-notes.md#appendix-a--primers)** — skim those first.
 
 ---
 
@@ -94,16 +94,16 @@ Once the team internalizes **agent (who) · sandbox (where) · branchStrategy (h
 | Vercel | `.../sandboxes/vercel` | Isolated | Cloud microVMs — CI without local Docker |
 | No-sandbox | `.../sandboxes/no-sandbox` | None | Interactive/trusted runs directly on host |
 
-**Branch strategies (the `branchStrategy` slot)** — `head` (write straight to working dir), `merge-to-head` (temp branch → merge back), `branch` (land on a named branch). See the [comparison](02-reference.md#3-the-branchstrategy-slot--how-changes-come-home).
+**Branch strategies (the `branchStrategy` slot)** — `head` (write straight to working dir), `merge-to-head` (temp branch → merge back), `branch` (land on a named branch). See the [comparison](02-detailed-notes.md#3-the-branchstrategy-slot--how-changes-come-home).
 
 ---
 
 ## Our enterprise use cases (covered as recipes in the reference)
 
-1. **Parallel AFK agents** — fan out N agents on N branches, unattended, then collect results. → [recipe](02-reference.md#recipe-1--parallel-afk-agents)
-2. **Implement → review pipeline** — one agent builds, gate on tests, another reviews/fixes on the same warm sandbox. → [recipe](02-reference.md#recipe-2--implement--review-pipeline)
-3. **Orchestrate our own agents** — plug custom agents / custom sandbox providers into the same spine. → [recipe](02-reference.md#recipe-3--orchestrate-our-own-agents)
-4. **CI / automation** — headless runs from pipelines with structured output and secrets. → [recipe](02-reference.md#recipe-4--ci--automation)
+1. **Parallel AFK agents** — fan out N agents on N branches, unattended, then collect results. → [recipe](02-detailed-notes.md#recipe-1--parallel-afk-agents)
+2. **Implement → review pipeline** — one agent builds, gate on tests, another reviews/fixes on the same warm sandbox. → [recipe](02-detailed-notes.md#recipe-2--implement--review-pipeline)
+3. **Orchestrate our own agents** — plug custom agents / custom sandbox providers into the same spine. → [recipe](02-detailed-notes.md#recipe-3--orchestrate-our-own-agents)
+4. **CI / automation** — headless runs from pipelines with structured output and secrets. → [recipe](02-detailed-notes.md#recipe-4--ci--automation)
 
 ---
 
