@@ -1,0 +1,28 @@
+sequenceDiagram
+    participant H as Host (your repo)
+    participant SC as Sandcastle
+    participant WT as Worktree
+    participant SB as Sandbox (container)
+    participant AG as Agent
+
+    SC->>WT: create git worktree on source branch
+    opt copyToWorktree / host hooks
+        SC->>WT: copy files, run host hooks (e.g. cp .env)
+    end
+    SC->>SB: start sandbox (bind-mount worktree, or sync code in)
+    SC->>SB: run sandbox hooks (e.g. npm install)
+    loop up to maxIterations
+        SC->>AG: send resolved prompt
+        AG->>SB: edit files, run commands
+        AG-->>SC: stream output (text / tool calls)
+        AG->>SB: git commit (≤1 per iteration)
+        alt completion signal emitted
+            AG-->>SC: <promise>COMPLETE</promise>
+            SC->>SC: stop loop early
+        end
+    end
+    SC->>WT: collect commits
+    opt merge-to-head
+        SC->>H: merge source branch into target branch
+    end
+    SC-->>H: return { iterations, commits, branch, ... }

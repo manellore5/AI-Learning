@@ -40,31 +40,15 @@ The name says it: you **build in a sandbox, then bring the good parts home**.
 
 Everything in the API is either one of **three slots** or config around them:
 
-```mermaid
-flowchart LR
-    subgraph run["sandcastle.run()"]
-        direction TB
-        A["🤖 agent<br/><b>WHO</b><br/>claudeCode / codex /<br/>copilot / cursor / opencode"]
-        S["📦 sandbox<br/><b>WHERE</b><br/>docker / podman /<br/>vercel / no-sandbox / custom"]
-        B["🌿 branchStrategy<br/><b>HOW changes return</b><br/>head / merge-to-head / branch"]
-    end
-    P["📝 prompt / promptFile"] --> run
-    run --> C["✅ commits<br/>merged back to your repo"]
-```
+![Sandcastle's three pluggable slots feeding run()](diagrams/README-1.svg)
+
+<!-- Mermaid source: diagrams/README-1.mmd — edit then re-render via scripts/render_mermaid.py -->
 
 And the data always flows the same way:
 
-```mermaid
-flowchart LR
-    subgraph Host["🖥️ HOST (your machine + real repo)"]
-        repo["git repo"]
-    end
-    subgraph Sandbox["📦 SANDBOX (isolated)"]
-        agent["🤖 agent works<br/>on a prompt"]
-    end
-    repo -- "① code in" --> agent
-    agent -- "② commits out" --> repo
-```
+![Host-to-sandbox data flow: code in, commits out](diagrams/README-2.svg)
+
+<!-- Mermaid source: diagrams/README-2.mmd — edit then re-render via scripts/render_mermaid.py -->
 
 Once the team internalizes **agent (who) · sandbox (where) · branchStrategy (how) · prompt→commits (the flow)**, every option in the reference slots neatly into one of those buckets.
 
