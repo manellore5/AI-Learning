@@ -1,6 +1,6 @@
 # Sandcastle — Detailed Notes
 
-The complete picture: install, concepts, diagrams, implementation details, end-to-end examples, and every option. For a fast skim or refresher, see the **[Overview & Quick Revision](01-overview.md)**. New to containers, worktrees, or agents? Skim **[Appendix A — Primers](#appendix-a--primers)** first.
+The complete picture: install, concepts, diagrams, implementation details, end-to-end recipes, and every option. For a fast skim or refresher, see the **[Overview & Quick Revision](01-overview.md)**. New to containers, worktrees, or agents? Skim **[Appendix A — Primers](#appendix-a--primers)** first.
 
 **Contents**
 - [Why Sandcastle exists](#why-sandcastle-exists)
@@ -23,6 +23,20 @@ The complete picture: install, concepts, diagrams, implementation details, end-t
 
 ## Why Sandcastle exists
 
+### Why sandbox an agent at all?
+
+An agent is only **autonomous** if it isn't stopping to ask you permission for every bash command and web fetch. The blunt way to get that is skipping permission checks entirely (Claude Code's `--dangerously-skip-permissions`, a.k.a. **"YOLO mode"**) — but agents are non-deterministic, and unsupervised ones occasionally delete home directories, wreck config files, or otherwise cause chaos. The fix isn't *more* permission prompts, it's a **smaller world**: run the agent somewhere it *literally cannot reach* the rest of your machine. Then the permission question becomes moot — it can only damage what's inside the box. That's sandboxing: *stuff the agent into the smallest possible box that still makes it useful.*
+
+Not all sandboxes are equal:
+
+- **Claude Code's built-in `/sandbox`** only wraps the bash tool — and the agent can break out of it, so it's not safe for skip-permissions AFK runs.
+- **Docker Sandbox** (`docker sandbox run claude .`) isolates the whole agent in a microVM (own Docker daemon, no host filesystem) — real isolation, but (as of early 2026) **no network isolation** (the agent can still reach the web), plus the operational problems below.
+- **Sandcastle** provides the same container/microVM-grade isolation as a programmable, provider-agnostic library — the subject of these notes.
+
+> **Test any sandbox boundary** by asking the agent to *"grab a file from my Downloads folder"*. A properly sandboxed agent replies that it has no access to your local filesystem — the fence working, and the agent able to say so.
+
+### Why not just run the agent in your repo?
+
 Running an AI coding agent **directly** on your repo has three problems:
 
 1. **Risk.** The agent can trash your working tree, run destructive commands, or touch files it shouldn't. There's no blast-radius boundary.
@@ -30,6 +44,8 @@ Running an AI coding agent **directly** on your repo has three problems:
 3. **No structure.** There's no clean way to say "implement, then verify, then review, then merge" as a repeatable pipeline — locally *and* in CI, with the same code.
 
 Sandcastle solves all three by putting the agent in a **sandbox** and choreographing the lifecycle around it: code in, agent runs, commits out, merge home. You get **isolation** (safe), **many boxes at once** (parallel), and a **programmable pipeline** (`run()` / `createSandbox()` / hooks). It is deliberately **unopinionated** about your workflow — you bring the prompts and the orchestration; Sandcastle handles sandboxing, branching, iteration, and merging.
+
+**Origin.** Matt Pocock built Sandcastle after using Anthropic's **Docker Sandbox** to run autonomous Claude Code ("**Ralph**") loops in his *Claude Code for Real Engineers* cohort — and finding it unstable, fast-changing, opaque (agent activity ran silently), and hard to parallelize or chain (implementer → reviewer). Sandcastle is the drop-in replacement: the cohort's shell-wrapped AFK harness collapsed to a ~17-line `main.ts`, with the Ralph loop **built in as `maxIterations`** and full live logs (iteration count, sandbox setup, expanded shell expressions, every tool call). See [Recipe 5](#recipe-5--a-ralph-loop-autonomous-plan-runner) for the pattern.
 
 ---
 
@@ -58,7 +74,7 @@ npm install --save-dev @ai-hero/sandcastle
 npx @ai-hero/sandcastle init
 ```
 
-Creates a **`.sandcastle/`** directory: `Dockerfile` (sandbox image), `prompt.md` + `implement`/`plan`/`review`/`merge` templates, `main.ts` (entry calling `run()`), and `.env.example`.
+Interactive: pick a **sandbox provider** (Docker/Podman), an **issue tracker** (GitHub Issues, Beads, or custom), and a **template** — `blank`, `simple-loop`, `sequential-reviewer`, `parallel-planner`, or `parallel-planner-with-review`. Creates a **`.sandcastle/`** directory with a `Dockerfile` (sandbox image), the template's prompt file(s) and `main.mts` entry calling `run()` (`main.ts` if your package is ESM), `.env.example`, and a `.gitignore` — and builds the container image unless you opt out (rebuild later with `npx @ai-hero/sandcastle docker build-image`).
 
 ### 3. Authenticate — use your Claude subscription ⭐
 
@@ -81,7 +97,7 @@ The agent inside the sandbox now uses **your Claude subscription** — no per-to
 Put a small, safe task in `.sandcastle/prompt.md`, then run the scaffolded entry script:
 
 ```typescript
-// .sandcastle/main.ts
+// .sandcastle/main.mts
 import { run, claudeCode } from "@ai-hero/sandcastle";
 import { docker } from "@ai-hero/sandcastle/sandboxes/docker";
 
@@ -93,7 +109,7 @@ await run({
 ```
 
 ```bash
-npx tsx .sandcastle/main.ts
+npx tsx .sandcastle/main.mts
 ```
 
 Sandcastle builds the sandbox image → starts an isolated container → the agent works on your prompt → its commit is brought back. With Docker's default **`head`** strategy the change lands **directly on your current branch**.
@@ -140,7 +156,7 @@ A single `run()` with a non-`head` branch strategy goes through this lifecycle:
 
 <!-- Mermaid source: diagrams/02-detailed-notes-1.mmd — edit then re-render via scripts/render_mermaid.py -->
 
-For **bind-mount** providers (Docker/Podman), the worktree is mounted straight into the container, so the agent writes through the mount and **no sync step is needed**. For **isolated** providers (Vercel), code is synced in and commits are pulled back out.
+For **bind-mount** providers (Docker/Podman), the worktree is mounted straight into the container, so the agent writes through the mount and **no sync step is needed**. For **isolated** providers (Vercel, Daytona), code is synced in and commits are pulled back out.
 
 ---
 
@@ -150,12 +166,12 @@ For **bind-mount** providers (Docker/Podman), the worktree is mounted straight i
 
 An **agent provider** tells Sandcastle how to launch a given AI tool, what env vars it needs, and how to parse its output stream.
 
-**Built-in providers:** `claudeCode` (default), `codex`, `copilot`, `cursor`, `opencode`.
+**Built-in providers:** `claudeCode` (default), `codex`, `pi`, `copilot`, `cursor`, `opencode`.
 
 ```typescript
 import { claudeCode } from "@ai-hero/sandcastle";
 claudeCode("claude-opus-4-8");                    // model string
-claudeCode("claude-opus-4-8", { effort: "high" }); // + provider-specific options
+claudeCode("claude-opus-4-8", { effort: "high" }); // + provider options: effort · env · captureSessions · permissionMode
 ```
 
 Each provider declares:
@@ -186,6 +202,7 @@ A **sandbox provider** creates the isolated environment. There are two shapes, w
 | **Docker** ⭐ | `.../sandboxes/docker` | Bind-mount | Container | Yes | **Recommended default** for local dev |
 | Podman | `.../sandboxes/podman` | Bind-mount | Container (rootless) | Podman | Security-conscious / rootless hosts |
 | Vercel | `.../sandboxes/vercel` | Isolated | Firecracker microVM | No (cloud) | CI / machines without Docker; strong isolation |
+| Daytona | `.../sandboxes/daytona` | Isolated | Cloud sandbox (Daytona SDK) | No (cloud; `DAYTONA_API_KEY`) | Cloud alternative to Vercel; image- or snapshot-based sandboxes |
 | No-sandbox | `.../sandboxes/no-sandbox` | None | **None** | No | Interactive/trusted host runs only |
 
 > **Our recommendation:** standardize on **Docker** for local dev (ubiquitous, fast bind-mount), and **Vercel** (or Podman) for CI/enterprise where you don't want a Docker daemon on the runner or want microVM-grade isolation. Because the slot is pluggable, the *same* `run()` code works across all of them — only the `sandbox:` argument changes.
@@ -293,7 +310,7 @@ const result = await run({
 // result.output is the validated payload
 ```
 
-Requires `maxIterations === 1`, and the configured tag **must appear in the prompt** (Sandcastle does not inject it — it errors early if missing). Orthogonal to the completion signal — use either, both, or neither.
+Requires `maxIterations === 1`, and the configured tag **must appear in the prompt** (Sandcastle does not inject it — it errors early if missing). Optional **`maxRetries`** (default `0`) retries on validation failure by **resuming the same session** with the error fed back — needs a session-capable provider (`claudeCode`, `codex`, `pi`). Orthogonal to the completion signal — use either, both, or neither.
 
 **Results** — `run()` returns `{ iterations, commits, branch, completionSignal, stdout, logFilePath }`. See [Appendix B](#appendix-b--full-options-reference).
 
@@ -347,7 +364,7 @@ Launches the agent's interactive TUI (optionally with an initial prompt). `inter
 
 ### Sessions — resume & fork
 
-Agents that support sessions (Claude Code, Codex) expose:
+Agents that support sessions (Claude Code, Codex, Pi) expose:
 - **`resumeSession: "<id>"`** on `run()` — continue a prior session (incompatible with `maxIterations > 1`; the session file must exist on host).
 - **`result.resume(prompt)`** — continue the captured session for one more iteration in the same warm sandbox.
 - **`result.fork(prompt)`** — branch off the captured session, leaving the parent intact.
@@ -365,8 +382,8 @@ hooks: {
 }
 ```
 
-- **Host hooks** run on your machine (`{ command }` only — no `sudo`, no `cwd`).
-- **Sandbox hooks** run inside the container (`{ command, sudo? }`). This is where you install deps, so `` !`command` `` prompt expansions and the agent see a ready environment.
+- **Host hooks** run on your machine (`{ command, timeoutMs? }` — no `sudo`, no `cwd`), sequentially within the group.
+- **Sandbox hooks** run inside the container (`{ command, sudo?, timeoutMs? }`), in parallel with the host `onSandboxReady` hooks. This is where you install deps, so `` !`command` `` prompt expansions and the agent see a ready environment.
 
 ### Mounts, network, devices, resources
 
@@ -501,6 +518,50 @@ console.log(result.output);  // { changed: [...] }
 // then: gh pr create --head result.branch ...
 ```
 
+### Recipe 5 — A Ralph loop (autonomous plan runner)
+
+A **Ralph loop** is running a coding agent **autonomously across many fresh context windows**: each iteration re-reads the repo state, does one chunk of a plan/backlog, commits, and the next iteration starts clean. Sandcastle has this loop **built in** — `maxIterations` *is* the Ralph loop. The whole harness is a tiny script (a shell wrapper just forwards CLI args):
+
+```typescript
+// main.ts — ~17 lines replaces a pile of Docker-wrangling shell script
+import { run, claudeCode } from "@ai-hero/sandcastle";
+import { docker } from "@ai-hero/sandcastle/sandboxes/docker";
+
+const [, , inputs, maxIterations] = process.argv;
+
+await run({
+  sandbox: docker(),
+  agent: claudeCode("claude-sonnet-4-6"),
+  promptFile: ".sandcastle/ralph.md",
+  maxIterations: Number(maxIterations) || 3,
+  promptArgs: { INPUTS: inputs },                 // e.g. "plan-x prd-y"
+  hooks: { sandbox: { onSandboxReady: [{ command: "pnpm install" }] } },
+});
+```
+
+The prompt file assembles the context **dynamically** each iteration:
+
+```markdown
+<commits>
+!`git log -n 5 --format="%H%n%ad%n%B---" --date=short 2>/dev/null || echo "No commits found"`
+</commits>
+
+<inputs>
+{{INPUTS}}
+</inputs>
+
+!`cat ralph/prompt.md`
+```
+
+Tricks worth stealing from this prompt:
+
+- **Recent commits are the loop's memory.** Each iteration is a fresh context window; injecting the last N commits tells the agent what previous iterations already did.
+- **Guard shell expressions with `|| echo ...`.** A non-zero exit fails the whole run — so fallback anything that can fail (e.g. `git log` on an empty branch).
+- **Compose prompts from files with `` !`cat …` ``.** Keep the stable instructions in one file and assemble live context around it.
+- **Backlog variant:** swap `{{INPUTS}}` for `` !`gh issue list …` `` so the agent picks its own tasks from GitHub issues (needs `GH_TOKEN` in `.sandcastle/.env`) — fully AFK.
+
+While it runs, ctrl/cmd-click the log path Sandcastle prints to watch live: iteration count, sandbox setup, expanded shell expressions, and every agent tool call.
+
 ---
 
 ## Troubleshooting & gotchas
@@ -515,6 +576,7 @@ console.log(result.output);  // { changed: [...] }
 | Changes didn't appear on my branch | With `merge-to-head` the temp branch is **deleted after merge**; with `branch` they're on the named branch. Check `result.branch`. |
 | Permissions on bind-mounted files | UID/GID mismatch — set `containerUid`/`containerGid` to match the image (a pre-flight check flags this). On SELinux, set `selinuxLabel`. |
 | Agent can't reach a service | Attach the container to the right Docker `network`, or expose `devices`. |
+| Sandbox image stale (old tools/deps) | Rebuild it: `npx @ai-hero/sandcastle docker build-image` (or `podman build-image`); `docker remove-image` to start clean. |
 | Tests "pass" but `exec` seemed to fail | `sandbox.exec()` **returns** non-zero `exitCode` (doesn't throw) — check `exitCode` explicitly. |
 
 ---
@@ -524,7 +586,8 @@ console.log(result.output);  // { changed: [...] }
 <details>
 <summary><b>Containers / sandboxes in 90 seconds</b></summary>
 
-A **container** is a lightweight, isolated environment with its own filesystem and processes, created from an **image** (a snapshot of an OS + tools). Docker/Podman run containers locally; Vercel runs **microVMs** (even stronger isolation) in the cloud. Sandcastle uses one as a **blast-radius boundary**: the agent can install packages, run commands, and edit files inside it without touching your real machine. A **bind-mount** shares a host folder into the container (changes are live on both sides); an **isolated** environment has its own disk and must **sync** files in and out.
+A **container** is a lightweight, isolated environment with its own filesystem and processes, created from an **image** (a snapshot of an OS + tools). Docker/Podman run containers locally; Vercel runs **microVMs** (even stronger isolation) in the cloud. Sandcastle uses one as a **blast-radius boundary**: the agent can install packages, run commands, and edit files inside it without touching your real machine. A **bind-mount** shares a host folder into the container (changes are live on both sides); an **isolated** environment has its own disk and must **sync** files in and out. The payoff for agents: with the blast radius contained, you can safely skip permission prompts and let the agent run fully autonomously — see [Why sandbox an agent at all?](#why-sandbox-an-agent-at-all)
+
 </details>
 
 <details>
@@ -562,7 +625,7 @@ An **AI coding agent** (Claude Code, Codex, …) is a tool that reads a **prompt
 | `copyToWorktree` | string[] | — | Host files → worktree (not with `head`). |
 | `timeouts` | object | see defaults | `copyToWorktreeMs`(60k), `gitSetupMs`(10k), `commitCollectionMs`(30k), `mergeToHostMs`(30k). |
 | `logging` | object | file | `{type:"file",path,verbose?,onAgentStreamEvent?}` or `{type:"stdout",verbose?}`. |
-| `output` | OutputDefinition | — | `Output.object({tag,schema})` / `Output.string({tag})`; needs `maxIterations===1` + tag in prompt. |
+| `output` | OutputDefinition | — | `Output.object({tag,schema,maxRetries?})` / `Output.string({tag})`; needs `maxIterations===1` + tag in prompt; `maxRetries` retries via session resume. |
 | `resumeSession` | string | — | Resume a session id (not with `maxIterations>1`). |
 | `signal` | AbortSignal | — | Cancels the run; handle stays usable. |
 
@@ -586,11 +649,13 @@ Worktree: `branch` · `worktreePath` · `run({agent, sandbox (**required**), ...
 See the concise table under [Core concepts](#core-concepts--the-vocabulary). Additional terms:
 
 - **Bind-mount sandbox provider** — provider where the host filesystem is mounted into the environment (Docker, Podman).
-- **Isolated sandbox provider** — provider with its own filesystem; syncs code in and commits out (Vercel).
+- **Isolated sandbox provider** — provider with its own filesystem; syncs code in and commits out (Vercel, Daytona).
 - **No-sandbox provider** — runs the agent directly on the host; no container.
 - **Hanging process** — an agent that emitted its completion signal but whose process hasn't exited (a child holding stdout open). Resolved by the completion timeout, not the idle timeout.
 - **Structured output** — schema-validated JSON in a caller-specified XML tag, returned from `run()`. Distinct from the completion signal.
 - **Shell expression** — a `` !`command` `` marker in a file prompt, evaluated inside the sandbox and replaced by stdout.
+- **Ralph loop** — running a coding agent autonomously over many iterations/context windows against a plan or backlog. In Sandcastle: `maxIterations > 1` + a prompt that re-reads repo state (recent commits, open issues) each round. See [Recipe 5](#recipe-5--a-ralph-loop-autonomous-plan-runner).
+- **YOLO mode** — running an agent with all permission checks skipped (e.g. `--dangerously-skip-permissions`). Required for true AFK autonomy; sane only when the agent's whole world is a disposable sandbox.
 
 ---
 
@@ -598,6 +663,7 @@ See the concise table under [Core concepts](#core-concepts--the-vocabulary). Add
 
 - Repo: <https://github.com/mattpocock/sandcastle>
 - Package: `@ai-hero/sandcastle` (npm)
+- Workshop lesson (origin + Ralph loop): [AIHero — Day 5: Ralph › Sandcastle](https://www.aihero.dev/workshops/day-5-ralph-dj2dh/sandcastle-4iebn) (cohort access)
 - Overview: [01-overview.md](01-overview.md) · Index: [README.md](README.md)
 
-_Written against the repo README, `docs/` site, `CONTEXT.md`, and `src/`. Verify version-specific details against the package version you install._
+_Written against the repo README, `docs/` site, `CONTEXT.md`, `src/`, and the AIHero cohort lesson. Verify version-specific details against the package version you install (lesson code was v0.4.x; API shapes here follow the current repo)._

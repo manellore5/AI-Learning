@@ -41,17 +41,16 @@ Hold **agent (who) · sandbox (where) · branchStrategy (how) · prompt→commit
 
 ## The repo / package at a glance
 
-- **Package:** `@ai-hero/sandcastle` — install as a dev dependency; scaffold with `npx @ai-hero/sandcastle init`.
-- **`.sandcastle/` (scaffolded in your repo):** `Dockerfile` (sandbox image), `prompt.md` + `implement`/`plan`/`review`/`merge` templates, `main.ts` (entry calling `run()`), `.env` (tokens).
-- **Main exports:** `run`, `interactive`, `createSandbox`, `createWorktree`, `Output` (structured output), agent providers (`claudeCode`, `codex`, `copilot`, `cursor`, `opencode`), and session helpers.
-- **Sandbox providers (separate import paths):** `docker`, `podman`, `vercel`, `no-sandbox` (+ `createBindMountSandboxProvider` / `createIsolatedSandboxProvider` for custom).
-- **Auth:** your **Claude Pro/Max subscription** via `CLAUDE_CODE_OAUTH_TOKEN` (`claude setup-token`), or `ANTHROPIC_API_KEY`; plus `GH_TOKEN`.
+- **Package:** `@ai-hero/sandcastle` — install as a dev dependency; scaffold with `npx @ai-hero/sandcastle init` (interactive: pick a sandbox provider, issue tracker, and one of five templates — `blank`, `simple-loop`, `sequential-reviewer`, `parallel-planner`, `parallel-planner-with-review`).
+- **`.sandcastle/` (scaffolded in your repo):** `Dockerfile` (sandbox image), the template's prompt file(s) + `main.mts` entry calling `run()`, `.env.example` (tokens), `.gitignore`.
+- **Main exports:** `run`, `interactive`, `createSandbox`, `createWorktree`, `Output` (structured output), agent providers (`claudeCode`, `codex`, `pi`, `copilot`, `cursor`, `opencode`), and session helpers.
+- **Sandbox providers (separate import paths):** `docker`, `podman`, `vercel`, `daytona`, `no-sandbox` (+ `createBindMountSandboxProvider` / `createIsolatedSandboxProvider` for custom).
 
 ---
 
 ## The three slots (cheat-sheet)
 
-**Agents (`agent`)** — `claudeCode` ⭐ · `codex` · `copilot` · `cursor` · `opencode` · custom. Swappable.
+**Agents (`agent`)** — `claudeCode` ⭐ · `codex` · `pi` · `copilot` · `cursor` · `opencode` · custom. Swappable.
 
 **Sandboxes (`sandbox`)**
 
@@ -60,6 +59,7 @@ Hold **agent (who) · sandbox (where) · branchStrategy (how) · prompt→commit
 | **docker** ⭐ | Bind-mount | Local dev (default) |
 | podman | Bind-mount | Rootless / secure hosts |
 | vercel | Isolated (microVM) | CI / no local Docker |
+| daytona | Isolated (cloud) | Cloud sandboxes (Daytona SDK) |
 | no-sandbox | None | Trusted interactive only |
 
 **Branch strategies (`branchStrategy`)**
@@ -104,9 +104,11 @@ await sandbox.run({ agent: claudeCode("claude-sonnet-4-6"), prompt: "Review the 
 - **Prompts:** `prompt` (inline, literal) **or** `promptFile` (supports `{{KEY}}` args + `` !`shell` `` expansion). Not both.
 - **`head` has no worktree** → `copyToWorktree` and worktree hooks need `merge-to-head` or `branch`.
 - **Reuse a sandbox** with `createSandbox()` (warm deps, `sandbox.exec()` for test gates); `await using` auto-closes.
-- **Structured output** (`Output.object({tag,schema})`) needs `maxIterations === 1` and the tag in the prompt.
-- **Same code, any provider** — only the `sandbox:` argument changes across docker/podman/vercel.
+- **Structured output** (`Output.object({tag,schema})`) needs `maxIterations === 1` and the tag in the prompt; optional `maxRetries` re-asks via session resume on validation failure.
+- **Same code, any provider** — only the `sandbox:` argument changes across docker/podman/vercel/daytona.
 - **Secrets:** `.sandcastle/.env` is git-ignored; local = subscription token, CI = API key.
+- **Ralph loops are built in:** `maxIterations > 1` + a prompt that re-reads repo state (recent commits / open issues) each iteration = an autonomous plan/backlog runner. Sandcastle grew out of replacing Docker Sandbox for exactly this.
+- **Why sandbox at all:** AFK autonomy means skipping permission prompts ("YOLO mode") — sane only when the agent's whole world is a disposable box. Test the fence: ask the agent for a file from your Downloads folder; it should refuse for lack of access.
 
 ---
 
@@ -114,5 +116,5 @@ await sandbox.run({ agent: claudeCode("claude-sonnet-4-6"), prompt: "Review the 
 
 - [Getting started (install & first run)](02-detailed-notes.md#getting-started-install--first-run)
 - [The three slots in depth](02-detailed-notes.md#the-three-slots-in-depth) · [Execution model](02-detailed-notes.md#the-execution-model) · [Advanced building blocks](02-detailed-notes.md#advanced-building-blocks)
-- [Recipes](02-detailed-notes.md#recipes): parallel agents · implement→review · custom agents · CI
+- [Recipes](02-detailed-notes.md#recipes): parallel agents · implement→review · custom agents · CI · Ralph loop
 - [Full options reference](02-detailed-notes.md#appendix-b--full-options-reference) · [Primers](02-detailed-notes.md#appendix-a--primers) · [Glossary](02-detailed-notes.md#glossary)
