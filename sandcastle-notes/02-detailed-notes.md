@@ -583,24 +583,17 @@ While it runs, ctrl/cmd-click the log path Sandcastle prints to watch live: iter
 
 ## Appendix A — Primers
 
-<details>
-<summary><b>Containers / sandboxes in 90 seconds</b></summary>
+### Containers / sandboxes in 90 seconds
 
 A **container** is a lightweight, isolated environment with its own filesystem and processes, created from an **image** (a snapshot of an OS + tools). Docker/Podman run containers locally; Vercel runs **microVMs** (even stronger isolation) in the cloud. Sandcastle uses one as a **blast-radius boundary**: the agent can install packages, run commands, and edit files inside it without touching your real machine. A **bind-mount** shares a host folder into the container (changes are live on both sides); an **isolated** environment has its own disk and must **sync** files in and out. The payoff for agents: with the blast radius contained, you can safely skip permission prompts and let the agent run fully autonomously — see [Why sandbox an agent at all?](#why-sandbox-an-agent-at-all)
 
-</details>
-
-<details>
-<summary><b>Git worktrees & branch strategies in 90 seconds</b></summary>
+### Git worktrees & branch strategies in 90 seconds
 
 A **git worktree** is a second working directory attached to the same repo, checked out to a different branch — so you can have multiple branches "live" at once without stashing. Sandcastle uses worktrees (under `.sandcastle/worktrees/`) to give an agent its own branch to work on without disturbing your main working directory. The **branch strategy** picks the flavor: `head` (no worktree — write in place), `merge-to-head` (temp worktree/branch, merge back, delete), or `branch` (a named worktree/branch you keep, e.g. for a PR).
-</details>
 
-<details>
-<summary><b>AI coding agents & the prompt→commit loop in 90 seconds</b></summary>
+### AI coding agents & the prompt→commit loop in 90 seconds
 
 An **AI coding agent** (Claude Code, Codex, …) is a tool that reads a **prompt**, then autonomously edits files, runs commands, and commits — iterating until the task is done. Sandcastle calls the agent once per **iteration** (each producing at most one commit), streams its output, and stops when the agent emits a **completion signal** or hits `maxIterations`. You never talk to the model directly; you hand Sandcastle a prompt and get **commits** back.
-</details>
 
 ---
 
