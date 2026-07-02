@@ -23,7 +23,7 @@ await run({
 
 ## Mental model (the part to actually remember)
 
-**① Walled construction site.** Your real repo is your **house** (the *Host*). You'd never let a contractor swing a hammer in your live house — you give them a **fenced site** with a copy of the plans (the *Sandbox*). The contractor is the *Agent*. **Sandcastle is the site manager**: fences the site, hands over the blueprint (*prompt*), lets them build, inspects, and **merges the finished work back home** (*branch strategy*). → build in a sandbox, bring the good parts home.
+**① Robot in a sealed playroom.** Your real repo is your **house** (the *Host*). You've hired a robot you don't fully trust yet (the *Agent*), so you build it a **sealed playroom** from a pre-furnished kit (the *Sandbox*) — whatever mess it makes stays inside. **Sandcastle is the site manager**: builds the room, slides the instructions under the door (*prompt*), lets the robot work, inspects, and **carries the finished builds back into the house** (*branch strategy*). Every provider option is just a deliberate small hole in the wall — a window onto one shelf (`mounts`), a phone line (`network`), a borrowed power tool (`devices`). → build in a sandbox, bring the good parts home.
 
 **② Three pluggable slots + one data flow.** Everything is one of three slots or config around them:
 

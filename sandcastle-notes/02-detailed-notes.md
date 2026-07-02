@@ -225,6 +225,8 @@ docker({
 });
 ```
 
+> **One sentence to remember it all:** `docker({...})` builds the agent a sealed playroom — **the kit it's built from** (`imageName`), **which of your shelves it can see** (`mounts`), **what notes it reads** (`env`), **who it can phone** (`network`), **what clubs it belongs to** (`groups`), **which of your power tools it borrows** (`devices`), **how much electricity it gets** (`cpus`), and **the paperwork** (`selinuxLabel`, `containerUid/Gid`) that keeps doors and name tags legal. Everything is a deliberate small hole punched in an otherwise sealed box.
+
 **Custom sandbox providers:** build your own with `createBindMountSandboxProvider` or `createIsolatedSandboxProvider`.
 
 ### 3. The `branchStrategy` slot — how changes come home
