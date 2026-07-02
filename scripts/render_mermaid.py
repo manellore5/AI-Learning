@@ -47,6 +47,12 @@ def main() -> int:
     ap.add_argument("--out", required=True, help="Output image path (e.g. media/topic.png)")
     ap.add_argument("--format", default="png", choices=["png", "svg"], help="Output format")
     ap.add_argument("--timeout", type=int, default=30, help="HTTP timeout in seconds")
+    ap.add_argument(
+        "--background",
+        default="#ffffff",
+        help="Opaque background injected into SVG output so default-theme text "
+        "stays visible on dark pages (pass 'none' to keep it transparent)",
+    )
     args = ap.parse_args()
 
     source = Path(args.src).read_text(encoding="utf-8") if args.src else sys.stdin.read()
@@ -63,6 +69,15 @@ def main() -> int:
     except urllib.error.URLError as exc:
         print(f"ERROR: could not reach kroki.io ({exc.reason}). Check internet.", file=sys.stderr)
         return 4
+
+    if args.format == "svg" and args.background.lower() != "none":
+        # kroki SVGs are transparent; mermaid's default theme assumes a light
+        # page, so dark text disappears in dark-mode viewers without this.
+        svg_text = data.decode("utf-8")
+        svg_text = svg_text.replace(
+            "<svg", f'<svg style="background-color:{args.background}"', 1
+        )
+        data = svg_text.encode("utf-8")
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
