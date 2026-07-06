@@ -152,9 +152,36 @@ These terms are used precisely throughout the docs (they come from the project's
 
 A single `run()` with a non-`head` branch strategy goes through this lifecycle:
 
-![Sandcastle run() lifecycle sequence](diagrams/02-detailed-notes-1.svg)
+```mermaid
+sequenceDiagram
+participant H as Host (your repo)
+participant SC as Sandcastle
+participant WT as Worktree
+participant SB as Sandbox (container)
+participant AG as Agent
 
-<!-- Mermaid source: diagrams/02-detailed-notes-1.mmd — edit then re-render via scripts/render_mermaid.py -->
+SC->>WT: create git worktree on source branch
+opt copyToWorktree / host hooks
+SC->>WT: copy files, run host hooks (e.g. cp .env)
+end
+SC->>SB: start sandbox (bind-mount worktree, or sync code in)
+SC->>SB: run sandbox hooks (e.g. npm install)
+loop up to maxIterations
+SC->>AG: send resolved prompt
+AG->>SB: edit files, run commands
+AG-->>SC: stream output (text / tool calls)
+AG->>SB: git commit (≤1 per iteration)
+alt completion signal emitted
+AG-->>SC: <promise>COMPLETE</promise>
+SC->>SC: stop loop early
+end
+end
+SC->>WT: collect commits
+opt merge-to-head
+SC->>H: merge source branch into target branch
+end
+SC-->>H: return { iterations, commits, branch, ... }
+```
 
 For **bind-mount** providers (Docker/Podman), the worktree is mounted straight into the container, so the agent writes through the mount and **no sync step is needed**. For **isolated** providers (Vercel, Daytona), code is synced in and commits are pulled back out.
 
@@ -187,9 +214,18 @@ Each provider declares:
 
 A **sandbox provider** creates the isolated environment. There are two shapes, which is the key distinction to understand:
 
-![Bind-mount vs isolated sandbox providers](diagrams/02-detailed-notes-2.svg)
-
-<!-- Mermaid source: diagrams/02-detailed-notes-2.mmd — edit then re-render via scripts/render_mermaid.py -->
+```mermaid
+flowchart TB
+subgraph BM["Bind-mount provider (Docker, Podman)"]
+direction LR
+h1["Host worktree"] <-- "mounted directly<br/>(agent writes through the mount)" --> c1["Container"]
+end
+subgraph ISO["Isolated provider (Vercel)"]
+direction LR
+h2["Host worktree"] -- "① sync code in" --> c2["microVM (own filesystem)"]
+c2 -- "② pull commits back" --> h2
+end
+```
 
 - **Bind-mount** — the host worktree is mounted into the container. Fast, no sync, changes appear on the host immediately. Default branch strategy: **`head`**.
 - **Isolated** — the environment has its own filesystem; code is synced in and commits synced back out. Stronger isolation, works remotely. Default branch strategy: **`merge-to-head`**.
@@ -233,9 +269,18 @@ docker({
 
 Set on `run()` (or defaulted by the provider). It controls where the agent's commits land.
 
-![Branch strategies: head, merge-to-head, branch](diagrams/02-detailed-notes-3.svg)
-
-<!-- Mermaid source: diagrams/02-detailed-notes-3.mmd — edit then re-render via scripts/render_mermaid.py -->
+```mermaid
+flowchart TB
+subgraph HEAD["head — default for bind-mount"]
+a1["Agent writes directly to<br/>the host working directory"] --> a2["Commit on current branch<br/>(no worktree, no indirection)"]
+end
+subgraph M2H["merge-to-head — default for isolated"]
+b1["Temp branch in a worktree"] --> b2["Agent works on temp branch"] --> b3["Merge back into HEAD"] --> b4["Temp branch deleted"]
+end
+subgraph BR["branch — explicit"]
+c1["Named branch in a worktree"] --> c2["Commits land on that branch"] --> c3["Re-run reuses the worktree,<br/>fast-forwards from origin when safe"]
+end
+```
 
 | Strategy | Config | Worktree? | Where commits land | Use when |
 |---|---|---|---|---|
@@ -285,9 +330,19 @@ This is how you feed **live context** (open issues, diffs, test output) into a p
 
 **Iteration = one agent invocation = at most one commit.** `run()` loops up to `maxIterations` (default `1`). The loop ends when either the cap is hit or the agent emits the **completion signal**.
 
-![Iteration and timeout state machine](diagrams/02-detailed-notes-4.svg)
-
-<!-- Mermaid source: diagrams/02-detailed-notes-4.mmd — edit then re-render via scripts/render_mermaid.py -->
+```mermaid
+stateDiagram-v2
+[*] --> Running
+Running --> Running: produces output<br/>(resets idle timer)
+Running --> NextIteration: commit made,<br/>iterations < max
+NextIteration --> Running
+Running --> Completing: emits completion signal<br/>(default &lt;promise&gt;COMPLETE&lt;/promise&gt;)
+Completing --> Done: process exits<br/>(or completion timeout, 60s)
+Running --> Failed: idle timeout (600s)<br/>no output at all
+Running --> Done: iterations == max
+Done --> [*]
+Failed --> [*]
+```
 
 Key knobs and behaviors:
 
@@ -448,9 +503,15 @@ const results = await Promise.all(
 for (const r of results) console.log(r.branch, r.commits.length, "commits");
 ```
 
-![Recipe: parallel AFK agents fan-out](diagrams/02-detailed-notes-5.svg)
-
-<!-- Mermaid source: diagrams/02-detailed-notes-5.mmd — edit then re-render via scripts/render_mermaid.py -->
+```mermaid
+flowchart LR
+O["Orchestrator<br/>(Promise.all)"] --> R1["run() → agent/fix-41"]
+O --> R2["run() → agent/fix-42"]
+O --> R3["run() → agent/fix-43"]
+R1 --> B1["branch agent/fix-41"]
+R2 --> B2["branch agent/fix-42"]
+R3 --> B3["branch agent/fix-43"]
+```
 
 ### Recipe 2 — Implement → review pipeline
 
@@ -474,9 +535,12 @@ if (tests.exitCode !== 0) {
 await sandbox.run({ agent: claudeCode("claude-sonnet-4-6"), promptFile: ".sandcastle/review.md" });
 ```
 
-![Recipe: implement-to-review pipeline](diagrams/02-detailed-notes-6.svg)
-
-<!-- Mermaid source: diagrams/02-detailed-notes-6.mmd — edit then re-render via scripts/render_mermaid.py -->
+```mermaid
+flowchart LR
+C["createSandbox()"] --> I["implement (opus)"] --> T{"npm test"}
+T -- fail --> F["fix pass"] --> T
+T -- pass --> V["review (sonnet)"] --> M["commits on agent/feature-x"]
+```
 
 ### Recipe 3 — Orchestrate our own agents
 
