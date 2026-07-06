@@ -1,9 +1,0 @@
-flowchart LR
-    subgraph Host["🖥️ HOST (your machine + real repo)"]
-        repo["git repo"]
-    end
-    subgraph Sandbox["📦 SANDBOX (isolated)"]
-        agent["🤖 agent works<br/>on a prompt"]
-    end
-    repo -- "① code in" --> agent
-    agent -- "② commits out" --> repo

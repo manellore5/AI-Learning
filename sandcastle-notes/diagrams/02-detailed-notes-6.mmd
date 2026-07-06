@@ -1,4 +1,0 @@
-flowchart LR
-    C["createSandbox()"] --> I["implement (opus)"] --> T{"npm test"}
-    T -- fail --> F["fix pass"] --> T
-    T -- pass --> V["review (sonnet)"] --> M["commits on agent/feature-x"]

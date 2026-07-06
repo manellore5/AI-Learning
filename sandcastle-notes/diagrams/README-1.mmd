@@ -1,9 +1,0 @@
-flowchart LR
-    subgraph run["sandcastle.run()"]
-        direction TB
-        A["🤖 agent<br/><b>WHO</b><br/>claudeCode / codex /<br/>copilot / cursor / opencode"]
-        S["📦 sandbox<br/><b>WHERE</b><br/>docker / podman /<br/>vercel / no-sandbox / custom"]
-        B["🌿 branchStrategy<br/><b>HOW changes return</b><br/>head / merge-to-head / branch"]
-    end
-    P["📝 prompt / promptFile"] --> run
-    run --> C["✅ commits<br/>merged back to your repo"]
