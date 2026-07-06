@@ -27,13 +27,22 @@ await run({
 
 **② Three pluggable slots + one data flow.** Everything is one of three slots or config around them:
 
-![Sandcastle's three pluggable slots feeding run()](diagrams/01-overview-1.svg)
+```mermaid
+flowchart LR
+subgraph run["sandcastle.run()"]
+direction TB
+A["🤖 agent — WHO<br/>claudeCode / codex /<br/>copilot / cursor / opencode"]
+S["📦 sandbox — WHERE<br/>docker / podman /<br/>vercel / no-sandbox / custom"]
+B["🌿 branchStrategy — HOW back<br/>head / merge-to-head / branch"]
+end
+P["📝 prompt / promptFile"] --> run --> C["✅ commits merged to your repo"]
+```
 
-<!-- Mermaid source: diagrams/01-overview-1.mmd — edit then re-render via scripts/render_mermaid.py -->
-
-![Host-to-sandbox data flow: code in, commits out](diagrams/01-overview-2.svg)
-
-<!-- Mermaid source: diagrams/01-overview-2.mmd — edit then re-render via scripts/render_mermaid.py -->
+```mermaid
+flowchart LR
+repo["🖥️ HOST: real git repo"] -- "① code in" --> agent["📦 SANDBOX: agent works on a prompt"]
+agent -- "② commits out" --> repo
+```
 
 Hold **agent (who) · sandbox (where) · branchStrategy (how) · prompt→commits (flow)** and everything else slots in.
 
