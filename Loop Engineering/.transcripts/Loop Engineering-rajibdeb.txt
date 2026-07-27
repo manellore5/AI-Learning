@@ -1,0 +1,48 @@
+Source: https://rajibdeb.substack.com/p/loop-engineering
+Author: Rajib Deb. Published Jul 04, 2026. Subtitle: "Thought on some design principles."
+
+# Loop Engineering
+
+The loopy era of Agents is here, but have we understood the loop engineering part well enough?
+
+The loop is not one large loop. The loop itself can have multiple sub components. It is a stack of nested loops. Each level loops for a different reason, closes on a different signal, and offers a different engineering lever. Loop engineering is the discipline of deciding, at each level: what iterates, what feeds back, when to exit, and what to cache.
+
+A useful axis runs through the stack: configurability. The innermost loop is fixed by the model architecture; each level outward becomes more programmable, until the outermost loops are pure design choices.
+
+## The Loop Stack
+
+### Level 1 — Model loop (not configurable)
+The autoregressive loop: predict a token, append it, predict again. You don't control this loop's logic — it's baked into the architecture. What you can engineer at this layer is its cost profile: KV caching turns the O(n^2) re-attention of each step into incremental work, and prompt-prefix caching extends the same idea across calls. Sampling parameters (temperature, top-p) are the only behavioral knobs.
+
+### Level 2 — Instruction loop
+Each instruction within a task runs in its own retry loop until it executes correctly. Example: an agent generates SQL, runs it, the database returns a syntax error — the error is fed back into the prompt and the instruction re-executes. The loop closes on success, not on first attempt.
+Engineering questions at this level:
+- What counts as "executed the right way"? (exit predicate: exception-free, schema-valid, assertion-pass)
+- How is the error rendered back? Raw stack trace vs. distilled message — feedback quality drives convergence speed.
+- Retry budget and backoff: when do you stop looping and escalate upward?
+- Does each retry see full history or just the last error? (context accumulation vs. reset)
+
+### Level 3 — Task loop
+A task is a sequence of instructions with a goal. Even if every instruction succeeds locally, the task can still miss the goal — so the task loops on verification: plan, execute, check against the goal, re-plan. The lever here is the verifier: tests, output schemas, rubric checks, LLM-as-judge. A task loop is only as good as its exit check.
+
+### Level 4 — Agent loop
+The classic agentic loop: reason → call tool → observe → reason again. Unlike level 2/3 loops (which have explicit exit predicates), the agent loop exits when the model itself decides the job is done. The lever is context engineering — what stays in the window across iterations (compaction, memory, scratchpads) determines whether long loops stay coherent.
+
+### Level 5 — Multi-agent loop
+An orchestrator loops over delegation: decompose, dispatch to sub-agents, collect, reconcile conflicts, re-dispatch gaps. Each sub-agent runs its own full stack of levels 1–4. The lever is decomposition quality and the reconciliation step — bad merges make the orchestrator loop forever.
+An alternate design pattern here may be that we do not loop at all in this stage, we rather orchestrate the stack from 1-4 using a cyclic or an acyclic DAG. This may be more manageable in certain use cases, as it will provide more resiliency and restart ability.
+
+### Level 6 — Human loop (which again can be a loop or be part of the orchestration)
+The outermost loop: the system proposes, a human reviews, feedback re-enters the system. The lever is the escalation policy — which failures at inner levels surface to a human vs. get absorbed by retries.
+
+## Design Principles
+1. Every loop needs an explicit exit predicate or budget. Unbounded inner loops starve outer ones.
+2. Fail upward. When a loop exhausts its budget, escalate to the level above with a distilled failure summary — not a raw transcript.
+3. Feedback is the product. The information you feed back into a loop (error messages, verifier output, review comments) matters more than the retry count.
+4. Cache at every level. KV cache at level 1, prompt-prefix cache at level 2, memoized sub-results at levels 3–5.
+5. Cost compounds multiplicatively. N6 × N5 × N4 × N3 × N2 token-generation calls — budget the outer loops tightest.
+
+## Open Questions
+- Can exit predicates be learned rather than hand-written? — A good area for research; traditional ML models have a lot of play here.
+- Where should observability live — per-loop traces, or one unified trace across levels? — Something observability products must think about.
+- Is there a level between instruction and task (a "step" loop for tool-argument repair)? — We may need it for multi-step instructions.
