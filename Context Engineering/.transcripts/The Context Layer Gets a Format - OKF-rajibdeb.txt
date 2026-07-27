@@ -1,0 +1,51 @@
+Source: https://rajibdeb.substack.com/p/the-context-layer-gets-a-format-a
+Author: Rajib Deb. Published Jul 04, 2026.
+Reference: https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing
+
+# The Context Layer Gets a Format: A Deep Look at the Open Knowledge Format (OKF)
+
+Data organization has been a central pursuit of our industry for decades, always in service of one goal: getting the right context and insight from data at the right time. We invented the data lake to hold everything. The medallion architecture to progressively refine raw data into trusted, consumable layers. Vault modeling to shape data in each organizational layer so context could be narrowed for specific insights and consumers. Layer by layer, we were doing context engineering before the term existed. But through all of it, the human was the focus — marts, semantic models, dashboards aligned to how business units read insights. That assumption is now breaking. In the agentic era, a new entity needs that context too — the AI agent — and agents don't need another dashboard. They need context: what a table means, how a metric is defined, which join paths are safe, what the runbook says when a pipeline goes stale.
+
+## The one thing humans do extraordinarily well
+Like us, agents need context, but unlike us they lack the one thing humans do extraordinarily well: filtering signal from noise. The brain has an internal mechanism to categorize and compartmentalize knowledge. When we reason, we don't scan everything; we retrieve exactly the compartment that matters. Call it an internal wiki: a structure that mostly stores pointers to knowledge, organized by category, with the knowledge sometimes living in the wiki and sometimes merely indexed by it. Foundation models have no such structure over your world. The models are no longer the bottleneck; what limits them is the lack of relevant, trustworthy context about your systems, your semantics, your business. What agents need is an external version of the brain's wiki: categorized, compartmentalized, pointer-rich, efficiently navigable.
+
+In June 2026, Google took a swing at this problem — not with another service, but with a format. The Open Knowledge Format (OKF) is an open, vendor-neutral specification for representing the metadata, context, and curated knowledge that AI systems need. It may be the first serious attempt to standardize the universal context layer.
+
+## The problem: context is everywhere, and nowhere
+Ask an agent "How do I compute weekly active users from our event stream?" and watch it struggle. The answer exists, scattered across: a metadata catalog with its own API and data model; a wiki page written three reorgs ago; docstrings and notebook cells only one team reads; the heads of a few senior engineers. Each surface is mutually incompatible; every catalog vendor has its own SDK and knowledge-graph schema; none portable across products or organizations. Every agent builder re-solves context-assembly from scratch. Humans tolerate fragmented context (ask around, search, remember); agents don't — they need context that is discoverable, parseable, and current.
+
+## The pattern that kept reappearing: knowledge as a living wiki
+Before OKF, a pattern emerged organically, strikingly similar to the brain's wiki. Andrej Karpathy articulated it in his LLM wiki gist: give agents a shared markdown library that grows more useful over time; let agents do the bookkeeping (reading, cross-referencing, updating files) while humans curate content and manage it like code. "LLMs don't get bored, don't forget to update a cross-reference, and can touch 15 files in one pass." Anatomy of an LLM wiki resembles ours: files in directories mirror compartments; cross-links mirror associative pointers; index files mirror recalling that we know something before recalling the thing. The wiki holds organized pointers plus distilled essentials — what makes retrieval efficient and noise filterable. Seen under many names: Obsidian vaults wired to coding agents; AGENTS.md/CLAUDE.md convention files; repos full of index.md and log.md; "metadata as code" repositories. But every instance is bespoke — none designed to cooperate; no agreed answer to what fields a document must carry or what filenames mean.
+
+## Google's insight: what's missing is a format, not another service
+The instinctive response is to build another platform/catalog/service/API. Google explicitly rejected that. What's needed is a way to represent knowledge that: anyone can produce (without an SDK); anyone can consume (without an integration); survives moving between systems, organizations, and tools; lives in version control alongside the code it describes; is readable by humans and parseable by agents — the same file, no translation layer.
+OKF v0.1 is deliberately simple: a directory of markdown files with YAML frontmatter, plus a small set of conventions that make bundles interoperable. No compression scheme, no new runtime, no required SDK. Just markdown (readable in any editor, renderable on GitHub), just files (shippable as a tarball, hostable in any git repo), and just YAML frontmatter for the handful of fields that need to be queryable.
+
+## How OKF works
+An OKF bundle is a directory of markdown files, each representing a concept — a table, dataset, metric, playbook, API, anything worth capturing. One concept, one file. The file path is the concept's identity. Each concept document carries a small YAML frontmatter block for structured fields and a markdown body for everything else.
+Three structural ideas do most of the work:
+- Cross-links turn the tree into a graph. Concepts link with ordinary markdown links, expressing relationships (joins-with, depends-on, references) richer than parent/child. Consumers build a knowledge graph by following links. Broken links are not an error — a link to a not-yet-existing document represents not-yet-written knowledge.
+- index.md files enable progressive disclosure. An agent reads the root index, sees what's available, and navigates one level at a time — what a context-window-constrained agent needs.
+- log.md files carry history. An optional chronological record of changes gives humans and agents institutional memory.
+The entire v0.1 spec — conformance rules, cross-linking semantics, reserved filenames — fits on a single page. Conformance requires almost nothing: every concept file needs parseable frontmatter with one required field, type.
+
+## The three design principles worth internalizing
+1. Minimally opinionated. OKF requires exactly one thing of every concept: a type field. What types exist, what other fields to include, what sections the body has — all left to the producer. The spec defines the interoperability surface, not the content model. Consumers must tolerate unknown types, unknown fields, and missing optional pieces gracefully.
+2. Producer/consumer independence. The format cleanly separates who writes knowledge from who reads it. A human-authored bundle can be consumed by an agent; a pipeline-generated bundle browsed in a visualizer; an LLM-synthesized bundle queried by another. The format is the contract; tooling at each end is independently swappable.
+3. Format, not platform. OKF is not tied to any cloud, database, model provider, or agent framework, and will never require a proprietary account or SDK to read, write, or serve. The value of a knowledge format comes from how many parties speak it, not from who owns it.
+
+## Why this matters: the context layer becomes an artifact
+Until now, "context engineering" has been a runtime activity — RAG pipelines, embedding stores, prompt assembly. OKF reframes the context layer as a versioned artifact: something you author, review, diff, and ship, exactly like code. Consequences:
+- Knowledge curation becomes a software-engineering activity — pull requests, diffs, blame, review workflows, because bundles live in git.
+- Context becomes portable across the agent stack — the same bundle feeds a coding agent, an analytics agent, and a human onboarding doc. Write once, consume everywhere.
+- Organizations can exchange knowledge, not just data — ship the meaning (schemas, semantics, join paths, caveats) alongside the bytes.
+- The flywheel favors agents maintaining their own context — enrichment agents write bundles, consumption agents read them, humans review diffs. The wiki stays alive because those who hate bookkeeping (us) are no longer doing it.
+
+## Open questions
+- Adoption is everything (network effect): will catalog vendors (Unity Catalog, Collibra, Atlan) write OKF exporters? Will agent frameworks treat OKF bundles as a first-class context source?
+- Governance of trust: markdown in git is easy to write (including wrongly). The spec handles structure, but freshness, accuracy, and authority need conventions/tooling the spec deliberately doesn't prescribe.
+- Scale: progressive disclosure via index.md is elegant, but how does it hold at tens of thousands of concepts? Search/retrieval layers on top feel inevitable — the format doesn't get in their way.
+- Untyped links: relationships are conveyed by prose around a link, not typed edges. Pragmatic for v0.1, but richer graph semantics may be a pressure point.
+
+## The bottom line
+The most telling line in the announcement: "The format itself is the contribution." Not the agent, visualizer, or catalog integration — the format. The context layer of the agentic era won't be won by whoever builds the best knowledge service; it will be built on whatever representation everyone can read and write. OKF's bet is that the representation is boring on purpose: markdown, YAML, files, git. If it pays off, your organization's knowledge stops being an exhaust product of your tools and becomes a first-class, portable asset.
