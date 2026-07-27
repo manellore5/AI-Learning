@@ -1,4 +1,4 @@
-# AWS AI-DLC Workflows 2.0
+# AWS AI-DLC Workflows 2.0 - AWS Labs
 Source: https://github.com/awslabs/aidlc-workflows/tree/v2 · Course: AI in SDLC · Added: 2026-07-27
 
 Additional source (roadmap): https://awslabs.github.io/aidlc-workflows/roadmap/

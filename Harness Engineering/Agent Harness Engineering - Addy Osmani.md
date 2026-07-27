@@ -1,4 +1,4 @@
-# Agent Harness Engineering
+# Agent Harness Engineering - Addy Osmani
 Source: https://addyosmani.com/blog/agent-harness-engineering/ · Course: Harness Engineering · Added: 2026-07-27
 
 ## Summary

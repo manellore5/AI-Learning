@@ -2,7 +2,7 @@
 Source: https://rajibdeb.substack.com/p/prompt-caching · Course: Prompt Engineering · Added: 2026-07-27
 
 ## Summary
-A concise, numbers-included primer on Anthropic prompt caching — the optimization that lets Claude reuse an already-processed prompt prefix instead of re-reading it every request. It explains the mechanic (a contiguous prefix of tools → system → messages, matched from the front), the economics (cache **reads cost ~10%** of base input, writes carry a small premium that amortizes over reuse), the two ways to enable it (automatic vs up to four explicit breakpoints), and the gotchas (per-model minimum lengths, the 20-block lookback window, byte-exact matching, and what invalidates the cache). Best leverage: apps that repeatedly send large, stable context — agents, coding assistants, document Q&A. A good companion to the deeper "Prompt Caching and Token Efficiency" note in this folder.
+A concise, numbers-included primer on Anthropic prompt caching — the optimization that lets Claude reuse an already-processed prompt prefix instead of re-reading it every request. It explains the mechanic (a contiguous prefix of tools → system → messages, matched from the front), the economics (cache **reads cost ~10%** of base input, writes carry a small premium that amortizes over reuse), the two ways to enable it (automatic vs up to four explicit breakpoints), and the gotchas (per-model minimum lengths, the 20-block lookback window, byte-exact matching, and what invalidates the cache). Best leverage: apps that repeatedly send large, stable context — agents, coding assistants, document Q&A. A good companion to the deeper "Prompt Caching and Token Efficiency - Hidekazu Konishi" note in this folder.
 
 ## Glossary
 

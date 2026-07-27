@@ -1,4 +1,4 @@
-# Learn Harness Engineering
+# Learn Harness Engineering - walkinglabs
 Source: https://github.com/walkinglabs/learn-harness-engineering · Course: Harness Engineering · Added: 2026-07-27
 
 ## Summary
