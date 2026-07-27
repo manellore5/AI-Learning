@@ -1,0 +1,59 @@
+Source: https://github.com/walkinglabs/learn-harness-engineering
+
+# Learn Harness Engineering
+A project-based course on building the environment, state management, verification, and control mechanisms that make AI coding agents work reliably.
+
+## The Model Is Smart, The Harness Makes It Reliable
+The strongest model in the world will still fail on real engineering tasks if you don't build a proper environment around it. You give Claude/GPT a task; it starts well then skips a step, breaks a test, says "done" but nothing works. This isn't a model problem, it's a harness problem.
+
+Evidence: Anthropic ran a controlled experiment — same model (Opus 4.5), same prompt ("build a 2D retro game editor"). Without a harness: ~$9 in 20 minutes, produced something that didn't work. With a full harness (planner + generator + evaluator): ~$200 in 6 hours, built a playable game. The model didn't change; the harness did. OpenAI reported the same with Codex: in a well-harnessed repo the same model goes from unreliable to reliable — a qualitative shift.
+
+THE HARNESS PATTERN: You give task -> Agent reads harness files -> Agent executes; harness governs every step: Instructions (what to do, in what order), Scope (one feature at a time, no overreach), State (progress log, feature list, git history), Verification (tests, lint, type-check, smoke runs), Lifecycle (init at start, clean state at end). Agent stops only when verification passes.
+
+## What Harness Engineering Actually Means
+Building a complete working environment around the model so it produces reliable results. Not better prompts — designing the system the model operates inside. A harness has five subsystems:
+- Instructions — AGENTS.md, CLAUDE.md, feature_list, docs/. Tell the agent what to do, in what order, what to read first. Progressive disclosure, not one giant file.
+- State — progress.md, feature_list, git log, session handoff. Track done/in-progress/next, persisted to disk.
+- Verification — tests + lint, type-check, smoke runs, e2e pipeline. Only a passing test suite counts as evidence.
+- Scope — one feature at a time, definition of done. No overreach.
+- Session Lifecycle — init.sh at start, clean-state checklist at end, handoff note, commit only when safe to resume.
+"The MODEL decides what code to write. The HARNESS governs when, where, and how it writes it. The harness doesn't make the model smarter. It makes the model's output reliable."
+
+## Why This Course Exists
+The question: can models reliably complete real engineering tasks inside real repositories, over multiple sessions, without constant human supervision? Right now: not without a harness. Without harness: agent breaks tests, says done, you fix it; session 2 starts fresh, no memory, redoes work. With harness: reads instructions, runs init.sh, one feature, verifies before done, updates progress, commits clean; session 2 reads progress log and continues. Result: you verify, not rescue.
+
+## Quick Start: Improve Your Agent Today
+Give the agent structured files in your repo:
+YOUR PROJECT ROOT: AGENTS.md (operating manual), CLAUDE.md (alt for Claude Code), init.sh (install + verify + start), feature_list.json (features, which done), claude-progress.md (what happened each session), src/. Grab starter templates from the Resource Library, drop in. Four files -> significantly more stable than prompts alone.
+
+## Capstone Project: A Real App
+All six course projects revolve around one product: an Electron-based personal knowledge base desktop app. Core features: import local documents, manage a document library, process and index documents, run AI-powered Q&A over imported content, return grounded answers with citations. Each project's starter/solution is a complete copy of the app at that stage; P(N+1) starter derived from P(N) solution.
+
+## Learning Path (7 phases)
+Phase 1 SEE THE PROBLEM: L01 strong models != reliable execution, L02 what harness means; P01 prompt-only vs rules-first.
+Phase 2 STRUCTURE THE REPO: L03 repo as single source of truth, L04 split instructions across files; P02 agent-readable workspace.
+Phase 3 CONNECT SESSIONS: L05 keep context alive across sessions, L06 initialize before every session; P03 multi-session continuity.
+Phase 4 FEEDBACK & SCOPE: L07 clear task boundaries, L08 feature lists as harness primitives; P04 runtime feedback.
+Phase 5 VERIFICATION: L09 stop declaring victory early, L10 full-pipeline run = real verification; P05 agent verifies own work.
+Phase 6 PUT IT ALL TOGETHER: L11 make runtime observable, L12 clean handoff at end; P06 build a complete harness (capstone).
+Phase 7 AUTOMATE THE LOOP: L13 stop prompting, design loops; P07 first automated loop (goal loop, timer loop, maker-checker).
+
+## Syllabus
+13 lectures (L01 why strong models fail; L02 five subsystems; L03 repo single source of truth; L04 progressive disclosure; L05 persist progress; L06 initialization phase; L07 one feature at a time; L08 feature lists as primitives; L09 confidence != correctness; L10 end-to-end testing; L11 observability inside harness; L12 clean state every session; L13 automated loops — goal, timer, maker-checker).
+7 projects (P01 minimal harness AGENTS.md+init.sh+feature_list.json; P02 agent-readable workspace + persistent state; P03 progress log + session handoff; P04 runtime feedback + scope control + incremental indexing; P05 self-verification + grounded Q&A; P06 full harness + observability + ablation study; P07 goal/timer/maker-checker loops).
+Resource Library: templates/checklists/method references in 15 languages.
+
+## Agent Session Lifecycle
+START: 1 read AGENTS.md/CLAUDE.md; 2 run init.sh (install, verify, health check); 3 read claude-progress.md; 4 read feature_list.json; 5 check git log.
+SELECT: 6 pick exactly ONE unfinished feature; 7 work only on that.
+EXECUTE: 8 implement; 9 run verification (tests, lint, type-check); 10 if fail fix and re-run; 11 if pass record evidence.
+WRAP UP: 12 update claude-progress.md; 13 update feature_list.json; 14 record what's still broken/unverified; 15 commit (only when safe to resume); 16 leave clean restart path.
+
+## Core References
+OpenAI: Harness engineering: leveraging Codex in an agent-first world; Anthropic: Effective harnesses for long-running agents; Anthropic: Harness design for long-running application development; OpenAI: Unrolling the Codex agent loop; Anthropic: Demystifying evals for AI agents; LangChain: Improving Deep Agents with harness engineering; Thoughtworks/Martin Fowler: Harness engineering for coding agent users; Cursor: Continually improving our agent harness.
+
+## Repository Structure
+docs/ (VitePress site: lectures/ 13, projects/ 7, resources/ 15 langs); projects/ (shared Electron+TS+React foundation; project-NN starter/ + solution/); skills/harness-creator; tools/audit-harness.sh (shell audit of five subsystems L03-L12, exits 0 when CRITICAL pass, no Node.js); package.json; CLAUDE.md.
+Local preview: npm install; npm run docs:dev / docs:build / docs:preview.
+Skills: harness-creator (scaffold a production-grade harness). Tools: audit-harness.sh (curl ... | bash -s -- /path/to/repo, or bash tools/audit-harness.sh /path).
+Other courses: Hands-on Modern RL; Modern LLM Notebook.

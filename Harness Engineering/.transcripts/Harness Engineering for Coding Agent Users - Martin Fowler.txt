@@ -1,0 +1,59 @@
+Source: https://martinfowler.com/articles/harness-engineering.html
+Author: Birgitta Böckeler (Distinguished Engineer, Thoughtworks). Published 02 April 2026. (Updates/supersedes an earlier Feb 2026 memo.)
+
+# Harness engineering for coding agent users
+To let coding agents work with less supervision, we need ways to increase confidence in their results. As software engineers we have a natural trust barrier with AI-generated code — LLMs are non-deterministic, don't know our context, and don't really understand the code (they think in tokens). This article explores a mental model bringing together context and harness engineering to build that trust.
+
+The term "harness" = everything in an AI agent except the model itself (Agent = Model + Harness). That's very wide, so bound it to coding agents. Part of the harness is built in (builder harness: system prompt, retrieval mechanism, orchestration). But coding agents also let us, the users, build an OUTER harness (user harness) for our use case and system.
+
+Bounded contexts (Figure 1): concentric circles — model at core (thing being harnessed), the coding agent's builder harness next, the user harness outermost.
+
+A well-built outer harness serves two goals: (1) increases probability the agent gets it right the first time, and (2) provides a feedback loop that self-corrects issues before they reach human eyes. Reduces review toil, increases quality, fewer wasted tokens.
+
+## Feedforward and Feedback
+- Guides (feedforward controls) — anticipate the agent's behaviour and steer it BEFORE it acts. Increase probability of good results on the first attempt.
+- Sensors (feedback controls) — observe AFTER the agent acts and help it self-correct. Powerful when signals are optimised for LLM consumption (e.g. custom linter messages that include self-correction instructions — a positive kind of prompt injection).
+Need both: feedback-only = agent repeats mistakes; feedforward-only = agent encodes rules but never finds out if they worked.
+
+## Computational vs Inferential
+- Computational — deterministic, fast, CPU. Tests, linters, type checkers, structural analysis. ms to seconds; reliable. Cheap enough to run on every change.
+- Inferential — semantic analysis, AI code review, "LLM as judge". GPU/NPU. Slower, more expensive, non-deterministic. Provide rich guidance + semantic judgment; can increase trust with a strong/suitable model.
+Examples: coding conventions (feedforward, inferential -> AGENTS.md, Skills); bootstrap-a-project (feedforward, both -> skill + bootstrap script); code mods (feedforward, computational -> OpenRewrite recipes tool); structural tests (feedback, computational -> pre-commit/agent hook running ArchUnit for module-boundary violations); how-to-review (feedback, inferential -> Skills).
+
+## Relation to context engineering
+Context engineering provides the means to make guides and sensors available to the agent. Engineering a user harness is a specific form of context engineering.
+
+## The steering loop
+The human's job is to STEER the agent by iterating on the harness. Whenever an issue happens multiple times, improve the feedforward/feedback controls to make it less probable or prevent it. Can use AI to improve the harness — agents help write structural tests, generate draft rules from observed patterns, scaffold custom linters, create how-tos from codebase archaeology.
+
+## Timing: Keep quality left
+Teams doing continuous integration / continuous delivery spread tests/checks/reviews across the timeline by cost, speed, criticality — checks as far left as possible (earlier = cheaper to fix). Distribute feedback sensors (including inferential ones) accordingly.
+- Fast/pre-commit: linters, fast test suites, basic code review agent.
+- Expensive/post-integration in the pipeline (plus re-running fast controls): mutation testing, broad review taking the bigger picture into account.
+Continuous drift & health sensors (outside the change lifecycle): dead-code detection, test-coverage-quality analysis, dependency scanners; runtime feedback — degrading SLOs -> suggestions, AI judges sampling response quality / flagging log anomalies.
+
+## Regulation categories
+The harness acts like a cybernetic governor combining feedforward + feedback to regulate the codebase toward a desired state. Three categories:
+- Maintainability harness — internal code quality; easiest today (lots of existing tooling). Computational sensors reliably catch duplicate code, cyclomatic complexity, missing coverage, architectural drift, style violations. LLMs partially catch semantic duplication, redundant tests, brute-force fixes, over-engineering — expensively/probabilistically, not every commit. Neither reliably catches misdiagnosis, over-engineering/unnecessary features, misunderstood instructions. Correctness is outside any sensor's remit if the human didn't clearly specify what they wanted.
+- Architecture fitness harness — guides/sensors defining and checking architecture characteristics (Fitness Functions). E.g. performance requirements fed forward + performance tests fed back; observability/logging conventions + debugging instructions reflecting on log quality.
+- Behaviour harness — the elephant in the room. Feed-forward: a functional specification (short prompt to multi-file). Feed-back: check AI-generated test suite is green, high coverage, maybe mutation testing, + manual testing. Puts a lot of faith in AI-generated tests — not good enough yet. "Approved fixtures" pattern helps selectively. Still much to figure out.
+
+## Harnessability
+Not every codebase is equally amenable. Strongly typed language -> type-checking sensor for free; clear module boundaries -> architectural constraint rules; frameworks (Spring) abstract away details, implicitly increasing success. Without these properties, those controls aren't available.
+
+## Ambient affordances
+Ned Letcher's term: structural properties of the environment that make it "legible, navigable, and tractable to agents operating within it." Greenfield can bake harnessability in from day one; legacy (esp. with tech debt) faces the harder problem — the harness is most needed where it is hardest to build.
+
+## Harness templates
+Enterprises have common service topologies (API business services, event processors, data dashboards), often codified as service templates. These might evolve into harness templates: a bundle of guides and sensors leashing a coding agent to the structure, conventions, and tech stack of a topology. Teams may pick stacks partly based on available harnesses. Same versioning/contribution problems as service templates, maybe worse with non-deterministic controls.
+
+## Ashby's Law
+Ashby's Law of Requisite Variety: a regulator must have at least as much variety as the system it governs, and can only regulate what it has a model of. An LLM agent can produce almost anything; committing to a topology narrows that space, making a comprehensive harness achievable. Defining topologies is a variety-reduction move.
+
+## The role of the human
+Human developers bring an implicit harness: absorbed conventions, felt pain of complexity, name on the commit, organisational alignment (what the team is trying to achieve, tolerated tech debt, what "good" looks like), small human-paced steps. Agents have none: no social accountability, no aesthetic disgust at a 300-line function, no "we don't do it that way here," no organisational memory. Harnesses externalise and make explicit what developer experience brings, but only so far. A good harness should direct human input to where it's most important, not necessarily eliminate it.
+
+## A starting point — and open questions
+Raise the conversation above the feature level (skills, MCP servers) to strategically designing a system of controls. Discourse examples: OpenAI harness write-up (layered architecture enforced by custom linters + structural tests, recurring "garbage collection" scanning for drift; "our most difficult challenges now center on designing environments, feedback loops, and control systems"); Stripe "minions" (pre-push hooks running relevant linters by heuristic, shift feedback left, "blueprints"); resurgence of mutation & structural testing (computational feedback sensors); LSP/code-intelligence integration (computational feedforward guides); Thoughtworks stories on architecture-drift with computational+inferential sensors ("janitor army").
+Open questions: keep a harness coherent as it grows (guides/sensors in sync, not contradicting); how far to trust agents to make trade-offs when instructions and feedback conflict; if sensors never fire, is that high quality or inadequate detection? Need a way to evaluate harness coverage/quality (like code coverage / mutation testing for tests). Controls are scattered across delivery steps — potential for tooling to configure, sync, reason about them as a system. Building the outer harness is an ongoing engineering practice, not a one-time configuration.
+Follow-up article: "sensors for coding agents" (experiments with maintainability sensors).
