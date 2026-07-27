@@ -1,4 +1,4 @@
-# Master All 6 Claude Code Dynamic Workflows
+# Master All 6 Claude Code Dynamic Workflows - Mark Kashef
 Source: https://www.youtube.com/watch?v=g9b9G8dcS8Y · Course: Agentic AI · Added: 2026-07-27
 
 ## Summary
