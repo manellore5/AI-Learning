@@ -1,4 +1,4 @@
-# Claude API Prompt Caching and Token Efficiency
+# Prompt Caching and Token Efficiency
 Source: https://hidekazu-konishi.com/entry/anthropic_claude_api_prompt_caching_and_token_efficiency.html · Course: Prompt Engineering · Added: 2026-07-27
 
 ## Summary
