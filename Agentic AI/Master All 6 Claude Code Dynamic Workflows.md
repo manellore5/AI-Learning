@@ -1,5 +1,5 @@
 # Master All 6 Claude Code Dynamic Workflows
-Source: https://www.youtube.com/watch?v=g9b9G8dcS8Y · Course: Loop Engineering · Added: 2026-07-27
+Source: https://www.youtube.com/watch?v=g9b9G8dcS8Y · Course: Agentic AI · Added: 2026-07-27
 
 ## Summary
 Mark Kashef's TLDR of Anthropic's engineers' masterclass on **Claude Code dynamic workflows** — distilled to the **six core design patterns** everything else builds on. The real unlock isn't "a fancier way to spin up agents"; it's that Claude Code **designs and builds its own harness on the fly** — a custom little machine shaped for the task. Workflows exist to fix the **three failure modes of a single context window** (agent laziness, self-preference, goal drift) by spinning up many agents (default **Sonnet 4.6**), each with its own clean context, to solve pieces separately. The six patterns: **Classify & Act, Fan-Out & Synthesize, Adversarial Verification, Generate & Filter, Tournament, and Loop-Until-Done** — plus how to **stack** them, **share** a workflow as a skill (a JS file + `SKILL.md`), set a **token budget**, and when **not** to use workflows.
