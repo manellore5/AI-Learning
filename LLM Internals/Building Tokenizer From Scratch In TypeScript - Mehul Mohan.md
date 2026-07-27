@@ -1,4 +1,4 @@
-# Building Tokenizer From Scratch In TypeScript
+# Building Tokenizer From Scratch In TypeScript - Mehul Mohan
 Source: https://www.youtube.com/watch?v=mRcf5qQSYws · Course: LLM Internals · Added: 2026-07-27
 
 ## Summary
