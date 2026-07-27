@@ -1,0 +1,47 @@
+# Prompt Caching
+Source: https://rajibdeb.substack.com/p/prompt-caching
+
+Agentic application development requires multi-layered engineering, and prompt caching represents a critical optimization area that varies significantly across model providers. Anthropic's implementation leverages KV caching principles with a specific structural approach.
+
+## The core idea
+
+When caching is enabled, Claude examines whether the prompt's beginning matches recently processed content. Upon finding a match, it reuses the cached version and processes only new material. The cache maintains a contiguous prefix in fixed order: tools, system instructions, then messages. This ordering means early changes invalidate subsequent content. Cache entries persist for five minutes by default, with the timer resetting on each hit at no additional charge. Frequently-used system prompts effectively remain cached indefinitely without cost.
+
+## The economics
+
+Prompt caching introduces three token types beyond standard input. Writing to cache carries a small premium; reading costs dramatically less. Per million tokens, cache read costs 10% of base input rates. For a 100,000-token context reused in a session on Opus 4.8, caching reduces per-request costs from approximately $0.50 to $0.05—a 90% reduction. Cache write costs amortize across multiple requests. Premiums stack with Batch API discounts, and cache hits don't count against rate limits, relieving throughput pressure.
+
+## Two ways to turn it on
+
+**Automatic caching** uses a single cache_control field; the system places the breakpoint on the last cacheable block. This suits multi-turn chat without ongoing maintenance. **Explicit breakpoints** let you mark up to four specific blocks for content changing at different rates. The system looks backward up to 20 blocks from a breakpoint to find prior cache writes.
+
+## A worked example: the 20-block lookback window
+
+Prompts consist of numbered blocks—each message, document, or tool result. Two rules govern behavior:
+
+- Writes occur only at the breakpoint
+- Reads walk backward searching for prior writes, but only within 20 block positions
+
+In a growing conversation, adding multiple breakpoints prevents the cache from sliding out of the lookback window. Placing a breakpoint within 20 blocks of the next one ensures cache reuse.
+
+## Where it pays off
+
+Prompt caching delivers maximum returns for applications sending large, stable context blocks repeatedly—agents, coding assistants, and document Q&A products.
+
+## What to watch for
+
+Several guardrails separate efficient implementations from costly mistakes:
+
+- **Minimum length**: 1,024 tokens for Opus 4.8 and Sonnet 4.6; 4,096 for Haiku 4.5
+- **Breakpoint placement**: Mark stable content only; timestamps or incoming messages cause cache misses
+- **Exact matching**: Byte-for-byte identical content required, including images
+- **Invalidation factors**: Tool definition changes wipe the entire cache; toggling web search or citations affects system and message caches
+- **Verification**: Check cache_creation_input_tokens and cache_read_input_tokens in responses
+
+## Beyond the basics
+
+A 1-hour cache option (at twice base write price) suits prompts reused hourly but not every five minutes. Cache pre-warming via max_tokens: 0 requests loads content before first user interaction, eliminating cold-start penalties. Prompt caching is Zero Data Retention eligible; cache representations exist in memory only and expire promptly without raw text storage.
+
+## The bottom line
+
+For applications repeatedly sending large stable context blocks, prompt caching ranks among the highest-leverage optimizations. Starting with automatic caching captures quick wins; measuring cache-hit rates identifies opportunities for explicit breakpoints where different sections change at varying speeds.
